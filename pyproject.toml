@@ -1,0 +1,20 @@
+[project]
+name = "nlqk"
+version = "0.0.1"
+authors = [
+  { name="Damir Cavar", email="dcavar@iu.edu" },
+  { name="Billy Dickson", email="dicksonb@iu.edu" },
+  { name="Koushik Reddy Parukola", email="koparu@iu.edu" }
+]
+description = "Natural Language Qu Kit (NLQK) - a Quantum Natural Language Processing (Q-NLP) library."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://nlqk.ai/"
+Issues = "https://github.com/dcavar/nlqk/issues"
