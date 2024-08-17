@@ -1,0 +1,5 @@
+theme: jekyll-theme-minimal
+title: Natural Language Qu Kit (NLQK)
+logo: /assets/img/logo-iu-red.png
+description: A Quantum Natural Language Processing (Q-NLP) Library
+show_downloads: false
