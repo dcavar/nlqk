@@ -1,6 +1,6 @@
 ## Natural Language Qu Kit (NLQK) - a Quantum Natural Language Processing (Q-NLP) Library
 
-(C) 2024 by [Damir Cavar], Billy Dickson, Koushik Reddy Parukola, [NLP-Lab]
+(C) 2024 by [Damir Cavar], [Billy Dickson], [Koushik Reddy Parukola], [NLP-Lab]
 
 See for more details the [Natural Language Processing Lab] ([NLP-Lab]) and the [Quantum NLP Group](https://nlp-lab.org/quantumnlp/).
 
@@ -19,13 +19,15 @@ See for more details the [Natural Language Processing Lab] ([NLP-Lab]) and the [
 
 ## Contributors
 
-- [Dr. Damir Cavar](http://damir.cavar.me/)
-- [Billy Dickson](https://www.linkedin.com/in/billy-dickson/)
-- [Koushik Reddy Parukola](https://www.linkedin.com/in/koushik-reddy-parukola/)
+- [Dr. Damir Cavar]
+- [Billy Dickson]
+- [Koushik Reddy Parukola]
 
 
 
 
+[Billy Dickson]: https://www.linkedin.com/in/billy-dickson/ "Billy Dickson"
+[Koushik Reddy Parukola]: https://www.linkedin.com/in/koushik-reddy-parukola/ "Koushik Reddy Parukola"
 [Damir Cavar]: http://damir.cavar.me/ "Damir Cavar"
 [Dr. Damir Cavar]: https://luddy.indiana.edu/contact/profile/?Damir_Cavar "Damir Cavar"
 [Fluree]: https://flur.ee/ "Fluree"
@@ -44,4 +46,5 @@ See for more details the [Natural Language Processing Lab] ([NLP-Lab]) and the [
 [Machine Learning]: https://en.wikipedia.org/wiki/Machine_learning "Machine Learning"
 [ROS]: https://www.ros.org/ "Robot Operating System"
 [Robot Ooperating System]: https://www.ros.org/ "Robot Operating System"
+[NLP-Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 
