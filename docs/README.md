@@ -5,8 +5,8 @@
 See for more details the [Natural Language Processing Lab] ([NLP-Lab]) and the [Quantum NLP Group](https://nlp-lab.org/quantumnlp/).
 
 
-- [GitHub repo]()
-- [PyPi page]()
+- [GitHub repo](https://github.com/dcavar/nlqk)
+- [PyPi page](https://pypi.org/project/nlqk/)
 
 
 
