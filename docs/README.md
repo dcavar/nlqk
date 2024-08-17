@@ -47,4 +47,5 @@ See for more details the [Natural Language Processing Lab] ([NLP-Lab]) and the [
 [ROS]: https://www.ros.org/ "Robot Operating System"
 [Robot Ooperating System]: https://www.ros.org/ "Robot Operating System"
 [NLP-Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
+[Natural Language Processing Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 
