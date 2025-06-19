@@ -1,6 +1,6 @@
 # Natural Language Qu Kit (NLQK)
 
-(C) 2024 by [Damir Cavar], [Billy Dickson], [Koushik Reddy Parukola], [NLP-Lab]
+(C) 2024 by [Damir Cavar], [Koushik Reddy Parukola], [NLP-Lab]
 
 
 Natural Language Qu Kit (NLQK) is a toolkit for Quantum Natural Language Processing (Q-NLP).
