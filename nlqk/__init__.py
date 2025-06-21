@@ -19,7 +19,9 @@ DATA_FOLDER_NAME = "nlqk_data"
 
 def get_data_folder() -> Path:
     """Get the path to the data folder for NLQK.
-    As a side-effect the folder is created if it does not exist."""
+    As a side-effect the folder is created if it does not exist.
+    Returns:
+            """
     if platform == "linux" or platform == "linux2":
         # home/nltk_data
         # linux

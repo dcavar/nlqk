@@ -18,6 +18,10 @@ import nlqk
 
 
 def download_simlex999() -> bool:
+    """Download the SimLex-999 dataset and extract it to the appropriate folder.
+    Returns:
+        bool: True if the download and extraction were successful, False otherwise.
+    """
     # make sure there is a "corpora" subfolder in the data folder
     data_folder = nlqk.get_data_folder() / "corpora"
     simlex_folder = data_folder / "SimLex-999"

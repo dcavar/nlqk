@@ -2,7 +2,7 @@
 Natural Language Qu Kit (NLQK)
 ==============================
 
-(C) 2024 by-2025 `Damir Cavar`_, Koushik Reddy Parukola, `NLP-Lab`_
+(C) 2024-2025 by `Damir Cavar`_, `NLP-Lab`_
 
 Natural Language Qu Kit (NLQK) is a Quantum Natural Language Processing (Q-NLP) library.
 
@@ -14,7 +14,13 @@ See for more details the `Natural Language Processing Lab`_ (`NLP-Lab`_) and the
 - `PyPi page <https://pypi.org/project/nlqk/>`_
 
 
+Contributors
+================
+- `Damir Cavar`_ (main author, maintainer, project lead)
+- `Koushik Reddy Parukola`_
+
 
 .. _Damir Cavar: http://damir.cavar.me/
-.. _NLP-Lab`: https://nlp-lab.org/
-.. _Natural Language Processing Lab`: https://nlp-lab.org/
+.. _Koushik Reddy Parukola: https://www.linkedin.com/in/koushik-reddy-parukola/
+.. _NLP-Lab: https://nlp-lab.org/
+.. _Natural Language Processing Lab: https://nlp-lab.org/
