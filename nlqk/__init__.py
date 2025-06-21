@@ -10,7 +10,7 @@ Natural Language Qu Kit (NLQK) - Quantum Natural Language Processing (QNLP) Libr
 
 from sys import platform
 from pathlib import Path
-import defaults
+import nlqk.defaults
 
 
 def get_data_folder() -> Path:
@@ -19,11 +19,11 @@ def get_data_folder() -> Path:
     Returns:
             """
     if platform == "linux" or platform == "linux2":
-        data_directory = Path.home() / defaults.DATA_FOLDER_NAME
+        data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_NAME
     elif platform == "darwin":
-        data_directory = Path.home() / defaults.DATA_FOLDER_NAME
+        data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_NAME
     elif platform == "win32":
-        data_directory = Path.home() / defaults.DATA_FOLDER_WIN / defaults.DATA_FOLDER_NAME
+        data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_WIN / nlqk.defaults.DATA_FOLDER_NAME
     else:
         data_directory = Path(".")
 

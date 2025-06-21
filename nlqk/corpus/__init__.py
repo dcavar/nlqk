@@ -14,6 +14,7 @@ import requests
 from sys import platform
 from pathlib import Path
 import zipfile
+import pandas as pd
 import nlqk
 import nlqk.defaults
 
@@ -23,8 +24,8 @@ def download_simlex999() -> bool:
     Returns:
         bool: True if the download and extraction were successful, False otherwise.
     """
-    # make sure there is a "corpora" subfolder in the data folder
-    data_folder = nlqk.get_data_folder() / "corpora"
+    # make sure there is a corpora subfolder in the data folder
+    data_folder = nlqk.get_data_folder() / nlqk.defaults.DATA_FOLDER_CORPORA
     if not data_folder.exists():
         data_folder.mkdir(parents=True)
     simlex_file = data_folder / nlqk.defaults.SIMLEX_999_ZIP_FILE
@@ -42,10 +43,30 @@ def download_simlex999() -> bool:
                 f.write(chunk)
         with zipfile.ZipFile(simlex_file, mode='r') as zip_ref:
             zip_ref.extractall(data_folder)
-        return True
+        # return True
     except requests.exceptions.RequestException as e:
         print(f"Error downloading file: {e}")
         return False
-
-
+    # unpack the nouns
+    simlex_main_file = data_folder / nlqk.defaults.SIMLEX_999_FOLDER / nlqk.defaults.SIMLEX_999_FILE
+    try:
+        if simlex_main_file.exists():
+            with open(simlex_main_file, mode='r', encoding='utf-8') as f:
+                # Process the file if needed
+                df = pd.read_csv(f, sep='\t', header=0, encoding='utf-8')
+                df_noun_pairs = df.loc[df['POS'] == 'N']
+                df_noun_pairs.to_csv(data_folder / nlqk.defaults.SIMLEX_999_FOLDER / 'nouns_data.txt', sep='\t', index=False, encoding='utf-8')
+                string_values_list = list(set(df_noun_pairs['word1'].astype(str).tolist() + df_noun_pairs['word2'].astype(str).tolist()))
+                string_values_list.sort()
+                with open(data_folder / nlqk.defaults.SIMLEX_999_FOLDER / 'nouns.txt', mode='w', encoding='utf-8') as nouns_file:
+                    for value in string_values_list:
+                        nouns_file.write(value + '\n')
+                return True
+        else:
+            print(f"SimLex-999 file not found: {simlex_main_file}")
+            return False
+    except IOError as e:
+        print(f"Error accessing file: {e}")
+        return False
+    return True
 

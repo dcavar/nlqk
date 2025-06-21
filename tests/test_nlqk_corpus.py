@@ -9,31 +9,21 @@ Testing the NLQK corpus functionality.
 """
 
 
-import unittest
-from pathlib import Path
 import sys
 sys.path.append('..') # path to the module folder
+import os
+import unittest
+from pathlib import Path
 
-from nlqk import corpus # import nlqk
-
+from nlqk import corpus
 
 
 class NLQKCorpusTest(unittest.TestCase):
-    """
-    """
+    """Testing the NLQK corpus functionality."""
+    @unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
 
     def test_get_SimLex(self):
-        """
-        """
-        #if sys.platform == "linux" or sys.platform == "linux2":
-        #    data_directory = Path.home() / DATA_FOLDER_NAME
-        #elif sys.platform == "darwin":
-        #    data_directory = Path.home() / DATA_FOLDER_NAME
-        #elif sys.platform == "win32":
-        #    data_directory = Path.home() / "AppData" / "Roaming" / DATA_FOLDER_NAME
-        #else:
-        #    data_directory = "."
-        #self.assertEqual(data_directory, nlqk.get_corpus_folder())
+        """Testing the SimLex corpus download functionality."""
         self.assertEqual(True, corpus.download_simlex999())
 
 

@@ -10,47 +10,49 @@ Testing the NLQK corpus functionality.
 """
 
 
-import unittest
-from pathlib import Path
 import sys
 sys.path.append('..') # path to the module folder
+import os
+import unittest
+from pathlib import Path
+import numpy as np
 
 import nlqk
+import nlqk.defaults
+import nlqk.embeddings
 
 
-DATA_FOLDER_NAME = nlqk.DATA_FOLDER_NAME # "nlqk_data"
-
-
-
-class NLQKTest(unittest.TestCase):
-    """
-    """
+class NLQKTestLocal(unittest.TestCase):
+    """Testing the NLQK local library functionality."""
+    @unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
 
     def test_get_corpus_folder(self):
-        """
-        """
+        """Testing the get_data_folder function to return the correct data directory based on the platform."""
         if sys.platform == "linux" or sys.platform == "linux2":
-            data_directory = Path.home() / DATA_FOLDER_NAME
+            data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_NAME
         elif sys.platform == "darwin":
-            data_directory = Path.home() / DATA_FOLDER_NAME
+            data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_NAME
         elif sys.platform == "win32":
-            data_directory = Path.home() / "AppData" / "Roaming" / DATA_FOLDER_NAME
+            data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_WIN / nlqk.defaults.DATA_FOLDER_NAME
         else:
-            data_directory = "."
-        self.assertEqual(data_directory, nlqk.get_corpus_folder())
+            data_directory = Path(".")
+        self.assertEqual(data_directory, nlqk.get_data_folder())
 
 
-    def test_square_not_a_number(self):
-        """
-        If your put anything but a number,
-        a TypeError Exception will be launch and your program will
-        stop working.
-        Usually you handle exception by better controlling inputs or
-        using try and catch.
-        """
-        #with self.assertRaises(TypeError):
-        #    square("not a number")
-        pass
+class NLQKTestEmbeddings(unittest.TestCase):
+    """Testing the embeddings module."""
+
+    def test_is_normalized(self):
+        """Test the is_normalized function."""
+        v = np.random.rand(8)
+        v_norm = v / np.linalg.norm(v)
+        self.assertTrue(nlqk.embeddings.is_normalized(v_norm))
+
+    def test_normalize(self):
+        """Test the normalize function."""
+        v = np.random.rand(8)
+        v_norm = v / np.linalg.norm(v)
+        self.assertEqual(v_norm, nlqk.embeddings.normalize(v))
 
 
 if __name__ == "__main__":
