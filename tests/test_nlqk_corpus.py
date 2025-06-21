@@ -14,7 +14,7 @@ from pathlib import Path
 import sys
 sys.path.append('..') # path to the module folder
 
-import nlqk
+from nlqk import corpus # import nlqk
 
 
 
@@ -34,7 +34,7 @@ class NLQKCorpusTest(unittest.TestCase):
         #else:
         #    data_directory = "."
         #self.assertEqual(data_directory, nlqk.get_corpus_folder())
-        pass
+        self.assertEqual(True, corpus.download_simlex999())
 
 
 if __name__ == "__main__":
