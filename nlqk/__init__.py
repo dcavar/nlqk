@@ -10,15 +10,16 @@ Natural Language Qu Kit (NLQK) - Quantum Natural Language Processing (QNLP) Libr
 
 from sys import platform
 from pathlib import Path
-import os
+# import os
 
 
 DATA_FOLDER_NAME = "nlqk_data"
 
 
 
-def get_corpus_folder() -> Path:
-
+def get_data_folder() -> Path:
+    """Get the path to the data folder for NLQK.
+    As a side-effect the folder is created if it does not exist."""
     if platform == "linux" or platform == "linux2":
         # home/nltk_data
         # linux

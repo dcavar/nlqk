@@ -3,7 +3,6 @@ name = "nlqk"
 version = "0.0.1"
 authors = [
   { name="Damir Cavar", email="dcavar@iu.edu" },
-  { name="Billy Dickson", email="dicksonb@iu.edu" },
   { name="Koushik Reddy Parukola", email="koparu@iu.edu" }
 ]
 description-file="README_pypi.rst"

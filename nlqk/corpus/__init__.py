@@ -19,7 +19,7 @@ import nlqk
 
 def download_simlex999() -> bool:
     # make sure there is a "corpora" subfolder in the data folder
-    data_folder = nlqk.get_corpus_folder() / "corpora"
+    data_folder = nlqk.get_data_folder() / "corpora"
     simlex_folder = data_folder / "SimLex-999"
     if not data_folder.exists():
         data_folder.mkdir(parents=True)
