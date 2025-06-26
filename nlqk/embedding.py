@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-embeddings.py
+embedding.py
 
 (C) 2025 Damir Cavar
 
