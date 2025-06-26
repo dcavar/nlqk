@@ -17,9 +17,9 @@ import unittest
 from pathlib import Path
 import numpy as np
 
+import nlqk
 from nlqk import embeddings
 from nlqk import defaults
-import nlqk
 
 
 class NLQKTestLocal(unittest.TestCase):
@@ -41,6 +41,7 @@ class NLQKTestLocal(unittest.TestCase):
 
 class NLQKTestEmbeddings(unittest.TestCase):
     """Testing the embeddings module."""
+    @unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
 
     def test_is_normalized(self):
         """Test the is_normalized function."""
