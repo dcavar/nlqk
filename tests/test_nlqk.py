@@ -17,6 +17,8 @@ import unittest
 from pathlib import Path
 import numpy as np
 
+from nlqk import embeddings
+from nlqk import defaults
 import nlqk
 
 
@@ -27,11 +29,11 @@ class NLQKTestLocal(unittest.TestCase):
     def test_get_corpus_folder(self):
         """Testing the get_data_folder function to return the correct data directory based on the platform."""
         if sys.platform == "linux" or sys.platform == "linux2":
-            data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_NAME
+            data_directory = Path.home() / defaults.DATA_FOLDER_NAME
         elif sys.platform == "darwin":
-            data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_NAME
+            data_directory = Path.home() / defaults.DATA_FOLDER_NAME
         elif sys.platform == "win32":
-            data_directory = Path.home() / nlqk.defaults.DATA_FOLDER_WIN / nlqk.defaults.DATA_FOLDER_NAME
+            data_directory = Path.home() / defaults.DATA_FOLDER_WIN / defaults.DATA_FOLDER_NAME
         else:
             data_directory = Path(".")
         self.assertEqual(data_directory, nlqk.get_data_folder())
@@ -44,13 +46,13 @@ class NLQKTestEmbeddings(unittest.TestCase):
         """Test the is_normalized function."""
         v = np.random.rand(8)
         v_norm = v / np.linalg.norm(v)
-        self.assertTrue(nlqk.embeddings.is_normalized(v_norm))
+        self.assertTrue(embeddings.is_normalized(v_norm))
 
     def test_normalize(self):
         """Test the normalize function."""
         v = np.random.rand(8)
         v_norm = v / np.linalg.norm(v)
-        self.assertEqual(v_norm, nlqk.embeddings.normalize(v))
+        self.assertEqual(v_norm, embeddings.normalize(v))
 
 
 if __name__ == "__main__":
