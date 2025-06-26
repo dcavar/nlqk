@@ -7,9 +7,7 @@ authors = [
   { name="Shane A. Sparks", email="sparksashane@gmail.com"},
   { name="James B. Graves", email="gravjabr@iu.edu"},
 ]
-description-file="README_pypi.rst"
-readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -21,3 +19,6 @@ dependencies = [
 [project.urls]
 Homepage = "https://nlqk.ai/"
 Issues = "https://github.com/dcavar/nlqk/issues"
+[project.readme]
+file = "README_pypi.rst"
+content-type = "text/x-rst"
