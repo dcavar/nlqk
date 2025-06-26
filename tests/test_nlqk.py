@@ -11,6 +11,8 @@ Testing the NLQK corpus functionality.
 
 
 import sys
+
+import nlqk.embeddings
 sys.path.append('..') # path to the module folder
 import os
 import unittest
