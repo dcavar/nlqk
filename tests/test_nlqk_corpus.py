@@ -14,7 +14,6 @@ sys.path.append('..') # path to the module folder
 import os
 import unittest
 from pathlib import Path
-
 from nlqk import corpus
 
 
