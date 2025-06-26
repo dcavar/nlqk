@@ -18,8 +18,6 @@ from pathlib import Path
 import numpy as np
 
 import nlqk
-import nlqk.defaults
-import nlqk.embeddings
 
 
 class NLQKTestLocal(unittest.TestCase):

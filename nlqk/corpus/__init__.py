@@ -16,7 +16,6 @@ from pathlib import Path
 import zipfile
 import pandas as pd
 import nlqk
-# import nlqk.defaults
 
 
 def download_simlex999() -> bool:
