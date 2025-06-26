@@ -14,7 +14,7 @@ sys.path.append('..') # path to the module folder
 import os
 import unittest
 from pathlib import Path
-import nlqk.corpus
+from nlqk.corpus import download_simlex999
 
 
 class NLQKCorpusTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class NLQKCorpusTest(unittest.TestCase):
 
     def test_get_SimLex(self):
         """Testing the SimLex corpus download functionality."""
-        self.assertEqual(True, nlqk.corpus.download_simlex999())
+        self.assertEqual(True, download_simlex999())
 
 
 
