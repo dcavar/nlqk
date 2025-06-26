@@ -16,10 +16,8 @@ import os
 import unittest
 from pathlib import Path
 import numpy as np
-import numpy.testing as npt
-import nlqk
-from nlqk import embedding
-#import nlqk.defaults
+import nlqk.embedding
+import nlqk.defaults
 
 
 class NLQKTestLocal(unittest.TestCase):
@@ -48,13 +46,13 @@ class NLQKTestEmbeddings(unittest.TestCase):
         v = np.random.rand(8)
         v_norm = v / np.linalg.norm(v)
         #print(embedding.is_normalized(v_norm))
-        self.assertTrue(embedding.is_normalized(v_norm))
+        self.assertTrue(nlqk.embedding.is_normalized(v_norm))
 
     def test_normalize(self):
         """Test the normalize function."""
         v = np.random.rand(8)
         v_norm = v / np.linalg.norm(v)
-        self.assertTrue(np.array_equal(v_norm, embedding.normalize(v)))
+        self.assertTrue(np.array_equal(v_norm, nlqk.embedding.normalize(v)))
 
 
 if __name__ == "__main__":

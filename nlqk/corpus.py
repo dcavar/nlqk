@@ -15,8 +15,8 @@ from sys import platform
 from pathlib import Path
 import zipfile
 import pandas as pd
-from nlqk import defaults # nlqk
-import nlqk #. # as nlqk
+import nlqk.defaults # nlqk
+# import nlqk #. # as nlqk
 
 
 def download_simlex999() -> bool:
@@ -25,10 +25,10 @@ def download_simlex999() -> bool:
         bool: True if the download and extraction were successful, False otherwise.
     """
     # make sure there is a corpora subfolder in the data folder
-    data_folder = nlqk.get_data_folder() / defaults.DATA_FOLDER_CORPORA
+    data_folder = nlqk.get_data_folder() / nlqk.defaults.DATA_FOLDER_CORPORA
     if not data_folder.exists():
         data_folder.mkdir(parents=True)
-    simlex_file = data_folder / defaults.SIMLEX_999_ZIP_FILE
+    simlex_file = data_folder / nlqk.defaults.SIMLEX_999_ZIP_FILE
     if simlex_file.exists():
         if data_folder.exists():
             return True

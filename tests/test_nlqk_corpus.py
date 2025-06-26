@@ -14,7 +14,7 @@ sys.path.append('..') # path to the module folder
 import os
 import unittest
 from pathlib import Path
-import nlqk
+import nlqk.corpus
 
 
 class NLQKCorpusTest(unittest.TestCase):
