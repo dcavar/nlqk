@@ -18,8 +18,8 @@ from pathlib import Path
 
 class NLQKCorpusTest(unittest.TestCase):
     """Testing the NLQK corpus functionality."""
-    @unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
 
+    @unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
     def test_get_SimLex(self):
         """Testing the SimLex corpus download functionality."""
         from nlqk.corpus import download_simlex999
