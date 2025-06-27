@@ -11,7 +11,7 @@ Testing the NLQK corpus functionality.
 
 import sys
 sys.path.append('.')
-sys.path.append('..') # path to the module folder
+#sys.path.append('..') # path to the module folder
 import os
 import unittest
 from pathlib import Path
