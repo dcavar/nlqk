@@ -61,7 +61,7 @@ Run the shell script (e.g., using bash):
 
 - [Dr. Damir Cavar]
 - [Billy Dickson]
-- [James B. Graves]
+- [James Bryan Graves]
 - [Koushik Reddy Parukola]
 - [Shane A. Sparks]
 
@@ -72,7 +72,7 @@ Run the shell script (e.g., using bash):
 [Billy Dickson]: https://www.linkedin.com/in/billy-dickson/ "Billy Dickson"
 [Koushik Reddy Parukola]: https://www.linkedin.com/in/koushik-reddy-parukola/ "Koushik Reddy Parukola"
 [Dr. Damir Cavar]: https://luddy.indiana.edu/contact/profile/?Damir_Cavar "Damir Cavar"
-[James B. Graves]: https://jamesbryangraves.com/ "James B. Graves"
+[James Bryan Graves]: https://jamesbryangraves.com/ "James Bryan Graves"
 [Shane A. Sparks]: https://www.linkedin.com/in/shane-sparks-a37832249/ "Shane A. Sparks"
 [NLP-Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 [Natural Language Processing Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
