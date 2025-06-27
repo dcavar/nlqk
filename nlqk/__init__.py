@@ -1,9 +1,10 @@
 # coding: utf-8
 
 """
-Natural Language Qu Kit (NLQK) - Quantum Natural Language Processing (QNLP) Library
+[Natural Language Qu Kit](https://nlqk.ai/) ([NLQK](https://nlqk.ai/)) - A Quantum Natural Language Processing (QNLP) Library
 
 (C) 2024-2025 by [Damir Cavar](http://damir.cavar.me/) and [NLP Lab](https://nlp-lab.org/)
+
 
 """
 

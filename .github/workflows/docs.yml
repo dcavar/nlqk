@@ -30,7 +30,10 @@ jobs:
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
       - run: pdoc -o docs/documentation/ nlqk/ # python documentation/make.py
-
+      - name: Install pdoc
+        run: pip install pdoc
+      - name: Add pdoc to PATH
+        run: echo "$(python -m site --user-base)/bin" >> $GITHUB_PATH
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/documentation/
