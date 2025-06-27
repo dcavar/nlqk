@@ -40,7 +40,7 @@ class NLQKTestLocal(unittest.TestCase):
 class NLQKTestEmbeddings(unittest.TestCase):
     """Testing the embeddings module."""
 
-    @unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
+    #@unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
     def test_is_normalized(self):
         """Test the is_normalized function."""
         from nlqk.embedding import is_normalized
@@ -49,7 +49,7 @@ class NLQKTestEmbeddings(unittest.TestCase):
         #print(embedding.is_normalized(v_norm))
         self.assertTrue(is_normalized(v_norm))
 
-    @unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
+    #@unittest.skipIf(os.environ.get("GITHUB_ACTIONS") == "true", "This test is deactivated on GitHub Actions")
     def test_normalize(self):
         """Test the normalize function."""
         from nlqk.embedding import normalize
