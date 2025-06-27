@@ -37,12 +37,33 @@ Use PyPi
   pip install nlqk
 
 
+## Building
+
+Install the required modules:
+
+  pip install -r requirements.txt
+
+
+
+### Documentation
+
+For the documentation install `pdoc`:
+
+  pip install pdoc
+
+Run the shell script (e.g., using bash):
+
+  ./create_doc.sh
+
+
 
 ## Contributors
 
 - [Dr. Damir Cavar]
 - [Billy Dickson]
+- [James B. Graves]
 - [Koushik Reddy Parukola]
+- [Shane A. Sparks]
 
 
 
@@ -51,6 +72,8 @@ Use PyPi
 [Billy Dickson]: https://www.linkedin.com/in/billy-dickson/ "Billy Dickson"
 [Koushik Reddy Parukola]: https://www.linkedin.com/in/koushik-reddy-parukola/ "Koushik Reddy Parukola"
 [Dr. Damir Cavar]: https://luddy.indiana.edu/contact/profile/?Damir_Cavar "Damir Cavar"
+[James B. Graves]: https://jamesbryangraves.com/ "James B. Graves"
+[Shane A. Sparks]: https://www.linkedin.com/in/shane-sparks-a37832249/ "Shane A. Sparks"
 [NLP-Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 [Natural Language Processing Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 [NLQK.ai]: http://nlqk.ai/ "NLQK.ai"
