@@ -55,6 +55,5 @@ class NLQKTestEmbeddings(unittest.TestCase):
         v_norm = v / np.linalg.norm(v)
         self.assertTrue(np.array_equal(v_norm, normalize(v)))
 
-
 if __name__ == "__main__":
     unittest.main()

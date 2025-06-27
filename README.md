@@ -47,7 +47,15 @@ Install the required modules:
 
 ## Test
 
-  python -m unittest discover tests
+Run all tests:
+
+  python -m unittest discover tests -v
+
+Run specific test categories:
+
+  python -m unittest discover tests/vectors  # Vector-related tests
+  python -m unittest tests.test_nlqk         # Core NLQK tests
+  python -m unittest tests.test_nlqk_corpus  # Corpus tests
 
 
 
