@@ -29,11 +29,11 @@ jobs:
       - run: pip install -e .
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
-      - run: pdoc -o documentation/ nlqk/ # python documentation/make.py
+      - run: pdoc -o docs/documentation/ nlqk/ # python documentation/make.py
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: documentation/
+          path: docs/documentation/
 
   # Deploy the artifact to GitHub pages.
   # This is a separate job so that only actions/deploy-pages has the necessary permissions.
