@@ -30,11 +30,13 @@ We aim at expanding these development environments (classical and quantum) to fa
 - [NLP-Lab Quantum NLP](https://nlp-lab.org/quantumnlp/)
 
 
+
 ## Install
 
 Use PyPi
 
   pip install nlqk
+
 
 
 ## Building
@@ -43,13 +45,13 @@ Install the required modules:
 
   pip install -r requirements.txt
 
+## Test
+
+  python -m unittest discover tests
+
 
 
 ### Documentation
-
-For the documentation install `pdoc`:
-
-  pip install pdoc
 
 Run the shell script (e.g., using bash):
 
