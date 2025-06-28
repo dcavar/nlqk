@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - main
-
+#
 # Add permissions for GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
+#permissions:
+#  contents: read
+#  pages: write
+#  id-token: write
+#
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,12 +29,12 @@ jobs:
       - name: Install pdoc
         run: pip install pdoc
       - run: pdoc -o docs/documentation/ nlqk/
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+      #- name: Setup Pages
+      #  uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './docs/documentation'
+          path: docs/documentation
 #
 #  deploy:
 #    environment:
