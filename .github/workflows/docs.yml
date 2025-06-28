@@ -4,13 +4,7 @@ on:
   push:
     branches:
       - main
-#
-# Add permissions for GitHub Pages
-#permissions:
-#  contents: read
-#  pages: write
-#  id-token: write
-#
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,29 +20,16 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install -e .
-      - name: Install pdoc
-        run: pip install pdoc
+      #- name: Install pdoc
+      #  run: pip install pdoc
       - run: pdoc -o docs/documentation/ nlqk/
-      #- name: Setup Pages
-      #  uses: actions/configure-pages@v4
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: ./docs/documentation
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/documentation #  Your documentation output directory
+          path: './docs/documentation'
+#      - name: Deploy
+#        uses: peaceiris/actions-gh-pages@v3
+#        with:
+#          github_token: ${{ secrets.GITHUB_TOKEN }}
+#          publish_dir: ./docs/documentation #  Your documentation output directory
 
-      #
-#  deploy:
-#    environment:
-#      name: github-pages
-#      url: ${{ steps.deployment.outputs.page_url }}
-#    runs-on: ubuntu-latest
-#    needs: build
-#    steps:
-#      - name: Deploy to GitHub Pages
-#        id: deployment
-#        uses: actions/deploy-pages@v4
