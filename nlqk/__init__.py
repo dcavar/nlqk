@@ -6,6 +6,7 @@
 (C) 2024-2025 by [Damir Cavar](http://damir.cavar.me/) and [NLP Lab](https://nlp-lab.org/)
 
 
+This is a collection of modules and functions necessary for Quantum Natural Language Processing.
 """
 
 
