@@ -1,5 +1,12 @@
+
+"""
+
+"""
+
+
 import numpy as np
 from scipy.linalg import expm
+
 
 def hamiltonian_to_state(H):
     """
@@ -16,6 +23,7 @@ def hamiltonian_to_state(H):
     psi = U @ zero_state
 
     return psi
+
 
 def check_states_equal(psi1, psi2, tol=1e-6):
     """Checks if two quantum states are equal up to global phase."""

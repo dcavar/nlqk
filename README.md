@@ -45,21 +45,26 @@ Install the required modules:
 
   pip install -r requirements.txt
 
+
 ## Test
 
 Run all tests:
 
-  python -m unittest discover tests -v
+  pytest tests
 
 Run specific test categories:
 
-  python -m unittest discover tests/vectors  # Vector-related tests
-  python -m unittest tests.test_nlqk         # Core NLQK tests
-  python -m unittest tests.test_nlqk_corpus  # Corpus tests
+  pytest tests/vectors  # Vector-related tests
+  pytest tests/test_nlqk         # Core NLQK tests
+  pytest tests/test_nlqk_corpus  # Corpus tests
 
 
 
 ### Documentation
+
+Run this command to regenerate the library and API documentation:
+
+  pdoc -o docs/documentation/ nlqk/
 
 Run the shell script (e.g., using bash):
 
