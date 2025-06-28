@@ -8,13 +8,9 @@ test_vectors.py
 Testing the NLQK vectors functionality.
 """
 
-import sys
-sys.path.append('.')
-import os
 import unittest
 import numpy as np
 from nlqk.vectors import normalize
-
 
 class TestVectorsNormalize(unittest.TestCase):
     """Testing the NLQK vectors functionality."""

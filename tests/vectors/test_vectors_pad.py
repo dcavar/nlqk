@@ -8,9 +8,6 @@ test_vectors_pad.py
 Testing the NLQK vector padding functionality.
 """
 
-import sys
-sys.path.append('../..')
-import os
 import unittest
 import numpy as np
 from nlqk.vectors import pad_vector
