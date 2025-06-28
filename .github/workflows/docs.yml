@@ -34,8 +34,14 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/documentation
-#
+          path: ./docs/documentation
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/documentation #  Your documentation output directory
+
+      #
 #  deploy:
 #    environment:
 #      name: github-pages
