@@ -10,7 +10,7 @@ Testing the NLQK vector padding functionality.
 
 import unittest
 import numpy as np
-from nlqk.vectors import pad_vector
+from nlqk.embeddings import pad_vector
 
 
 class TestVectorsPad(unittest.TestCase):

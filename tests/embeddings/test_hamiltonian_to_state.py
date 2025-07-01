@@ -14,7 +14,7 @@ import os
 import unittest
 import numpy as np
 from scipy.linalg import expm
-from nlqk.states import hamiltonian_to_state, check_states_equal
+from nlqk.embeddings import hamiltonian_to_state, check_states_equal
 
 
 class TestHamiltonianToState(unittest.TestCase):

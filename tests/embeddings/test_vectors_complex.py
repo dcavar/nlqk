@@ -10,7 +10,7 @@ Testing the NLQK vectors functionality.
 
 import unittest
 import numpy as np
-from nlqk.vectors import pair_real_to_complex
+from nlqk.embeddings import pair_real_to_complex
 
 
 class TestVectorsComplex(unittest.TestCase):

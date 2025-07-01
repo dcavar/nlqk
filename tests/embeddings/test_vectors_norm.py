@@ -10,7 +10,7 @@ Testing the NLQK vectors functionality.
 
 import unittest
 import numpy as np
-from nlqk.vectors import normalize
+from nlqk.embeddings import normalize
 
 class TestVectorsNormalize(unittest.TestCase):
     """Testing the NLQK vectors functionality."""

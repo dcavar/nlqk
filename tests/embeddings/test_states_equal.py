@@ -13,7 +13,7 @@ sys.path.append('../..')
 import os
 import unittest
 import numpy as np
-from nlqk.states import check_states_equal
+from nlqk.embeddings import check_states_equal
 
 
 class TestStatesEqual(unittest.TestCase):
