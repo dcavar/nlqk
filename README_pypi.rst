@@ -19,11 +19,11 @@ Contributors
 - `Damir Cavar`_ (main author, maintainer, project lead)
 - `Koushik Reddy Parukola`_
 - `Shane A. Sparks`_
-- `James B. Graves`_
+- `James Bryan Graves`_
 
 .. _Damir Cavar: http://damir.cavar.me/
 .. _Koushik Reddy Parukola: https://www.linkedin.com/in/koushik-reddy-parukola/
 .. _Shane A. Sparks: https://
-.. _James B. Graves: https://
+.. _James Bryan Graves: https://
 .. _NLP-Lab: https://nlp-lab.org/
 .. _Natural Language Processing Lab: https://nlp-lab.org/

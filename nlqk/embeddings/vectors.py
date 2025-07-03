@@ -44,6 +44,7 @@ def cosine_similarity(
     else:
         return float(np.clip(sim.real, -1.0, 1.0))
 
+
 def is_normalized(vector: Union[Sequence[Union[int, float, complex]], np.ndarray], tolerance: float=1e-9) -> np.bool_:
     """
     Checks if a NumPy vector is normalized (its L2 norm is approximately 1).
@@ -57,6 +58,7 @@ def is_normalized(vector: Union[Sequence[Union[int, float, complex]], np.ndarray
     """
     norm = np.linalg.norm(vector)
     return np.isclose(norm, 1.0, atol=tolerance)
+
 
 def normalize(vector: Union[Sequence[Union[int, float, complex]], np.ndarray]) -> np.ndarray:
     """
@@ -110,9 +112,15 @@ def pad_vector(vector: Union[Sequence[Union[int, float, complex]], np.ndarray], 
     Raises:
         ValueError: If the input vector is larger than the target size.
     """
-    if len(vector) > target_size:
-        raise ValueError("Vector is larger than the target size.")
-    padded_vector = np.zeros(target_size, dtype=complex)
-    padded_vector[:len(vector)] = vector
-    return padded_vector
+    #if len(vector) > target_size:
+    #    raise ValueError("Vector is larger than the target size.")
+    #padded_vector = np.zeros(target_size, dtype=complex)
+    #padded_vector[:len(vector)] = vector
+    #return padded_vector
+    return np.pad(vector, (0, 9 - vector.shape[0]), mode='constant')
+
+
+def pad_vectors(vectors: np.ndarray, size: int) -> np.ndarray:
+    """Pad rows with zeros to size."""
+    return np.pad(vectors, [(0, 0), (0, size - vectors.shape[1])], mode='constant')
 
