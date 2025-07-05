@@ -12,8 +12,7 @@ Vector functionalities:
 """
 
 
-from typing import Union, Sequence
-# import torch     # If you're using PyTorch to check for GPU
+# from typing import Union, Sequence
 try: # prefer RAPIDS libraries and GPU over numpy and CPU
     import cupy as np  # Try to import cupy and alias it as np
     _USE_GPU = True
@@ -26,7 +25,7 @@ except ModuleNotFoundError:
 # Example Usage:
 
 
-def cosine_similarity(vec1: np.ndarray, vec2: np.ndarray, tol: float = 1e-12) -> float:
+def cosine_similarity(vec1: np.ndarray, vec2: np.ndarray, tol: float = 1e-12) -> complex:
     """
     Computes the cosine similarity between two vectors.
 
@@ -53,7 +52,7 @@ def cosine_similarity(vec1: np.ndarray, vec2: np.ndarray, tol: float = 1e-12) ->
     if n1 < tol or n2 < tol:
         raise ZeroDivisionError("Zero-length vector")
 
-    return float(np.vdot(vec1, vec2) / (n1 * n2))
+    return complex(np.vdot(vec1, vec2) / (n1 * n2))
 
 
 def is_normalized(vector: np.ndarray, tolerance: float=1e-9) -> bool:

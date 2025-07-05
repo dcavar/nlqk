@@ -25,3 +25,11 @@ SIMLEX_999_FOLDER = "SimLex-999"
 SIMLEX_999_FILE = "SimLex-999.txt"
 SIMLEX_999_URL = "https://fh295.github.io/SimLex-999.zip"
 
+
+# OpenAI 3rd generation embedding models (name : # dimensions)
+OPEN_AI_EMBEDDING_MODELS = {
+    'text-embedding-3-small': 1536,
+    'text-embedding-3-large': 3072,
+    'text-embedding-ada-002': 1535
+}
+

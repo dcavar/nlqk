@@ -1,55 +1,68 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
 """
 embedding.py
 
-(C) 2025 Damir Cavar
+(C) 2025 by [Damir Cavar](http://damir.cavar.me/) and the [NLP Lab](https://nlp-lab.org/)
+
+Module: nlqk.embeddings.states
+
 
 """
 
-from .vectors import (
-    is_normalized,
-    normalize,
-    pad_vector,
-    pair_real_to_complex,
-    cosine_similarity,
-)
-
-from .states import (
-    hamiltonian_to_state,
-    check_states_equal,
-)
-
-# import numpy as np
+import os
+from typing import List
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    _USE_GPU = False
+from nlqk.defaults import OPEN_AI_EMBEDDING_MODELS
 
 
-# def is_normalized(vector: np.ndarray, tolerance: float=1e-9) -> np.bool_:
-#     """
-#     Checks if a NumPy vector is normalized (its L2 norm is approximately 1).
-
-#     Args:
-#         vector (np.ndarray): The input NumPy vector.
-#         tolerance (float): The allowed tolerance for comparison with 1.
-
-#     Returns:
-#         bool: True if the vector is normalized, False otherwise.
-#     """
-#     norm = np.linalg.norm(vector)
-#     return np.isclose(norm, 1.0, atol=tolerance)
+#from .vectors import (
+#    is_normalized,
+#    normalize,
+#    pad_vector,
+#    pair_real_to_complex,
+#    cosine_similarity,
+#)
+#from .states import (
+#    hamiltonian_to_state,
+#    check_states_equal,
+#)
 
 
-# def normalize(v: np.ndarray) -> np.ndarray:
-# 	"""Normalize the vector to have a length of 1."""
-# 	return v / np.linalg.norm(v)
+def get_openai_embeddings(wordlist: List[str], api_key = '', model_name: str = 'large') -> np.ndarray:
+    """Get the GPT embeddings for a wordlist.
+
+    Args:
+        wordlist List of str: List of words.
+        api_key str: The OpenAI API key.
+        model_name str: One of the valid OpenAI embedding model names.
+
+    Returns:
+        np.ndarray: the OpenAI embeddings for the words in the wordlist.
+
+    Raises:
+        ValueError: If the OpenAI key is missing, i.e., no specification of arg 'api_key' and not environment variable OPENAI_API_KEY.
+    """
+
+    if model_name not in OPEN_AI_EMBEDDING_MODELS:
+        raise ValueError(f'model_name not a valid OpenAI embedding model name. Use one of: {", ".join(OPEN_AI_EMBEDDING_MODELS.keys())}')
+    if not api_key:
+        # check environment variable OPENAI_API_KEY
+        api_key = os.environ.get('OPENAI_API_KEY')
+        if not api_key:
+            raise ValueError(f"Attempted OpenAI API call without API-key. Provide a valid value for 'api_key' or set the API-key in the environment variable OPENAI_API_KEY.")
+    # TODO call openai api
+    return np.array([])
 
 
-# def pad_vectors(vectors: np.ndarray, size: int) -> np.ndarray:
-#     """Pad rows with zeros to size."""
-#     return np.pad(vectors, [(0, 0), (0, size - vectors.shape[1])], mode='constant')
+def get_embeddings(wordlist: List[str], ) -> np.ndarray:
 
-
-# def pad_vector(v: np.ndarray, size: int) -> np.ndarray:
-#     """Pad the vector with zeros to size."""
-#     return np.pad(v, (0, 9 - v.shape[0]), mode='constant')
+    return np.array([])
 

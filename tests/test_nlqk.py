@@ -48,14 +48,14 @@ class NLQKTestEmbeddings(unittest.TestCase):
 
     def test_is_normalized(self):
         """Test the is_normalized function."""
-        from nlqk.embeddings import is_normalized
+        from nlqk.embeddings.vectors import is_normalized
         v = np.random.rand(8)
         v_norm = v / np.linalg.norm(v)
         self.assertTrue(is_normalized(v_norm))
 
     def test_normalize(self):
         """Test the normalize function."""
-        from nlqk.embeddings import normalize
+        from nlqk.embeddings.vectors import normalize
         v = np.random.rand(8)
         v_norm = v / np.linalg.norm(v)
         self.assertTrue(np.array_equal(v_norm, normalize(v)))
