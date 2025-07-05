@@ -6,11 +6,12 @@ test_input_types.py
 Testing that all declared input types work correctly with NLQK vector functions.
 """
 
+import sys
+sys.path.append('.') # ./..')
 import unittest
 import numpy as np
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+# sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
 from nlqk.embeddings.vectors import cosine_similarity, normalize, pad_vector
 

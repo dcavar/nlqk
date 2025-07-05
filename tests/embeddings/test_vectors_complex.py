@@ -8,6 +8,8 @@ test_vectors.py
 Testing the NLQK vectors functionality.
 """
 
+import sys
+sys.path.append('.') # ./..')
 import unittest
 import numpy as np
 from nlqk.embeddings import pair_real_to_complex

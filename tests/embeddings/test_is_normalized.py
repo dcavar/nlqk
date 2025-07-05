@@ -6,11 +6,12 @@ test_is_normalized.py
 Testing the NLQK vectors is_normalized functionality.
 """
 
+import sys
+sys.path.append('.') # ./..')
 import unittest
 import numpy as np
-import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
+#sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
 
 from nlqk.embeddings import is_normalized, normalize
 

@@ -9,7 +9,7 @@ Testing the NLQK Hamiltonian to state conversion functionality.
 """
 
 import sys
-sys.path.append('../..')
+sys.path.append('.') # ./..')
 import os
 import unittest
 import numpy as np

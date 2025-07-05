@@ -25,8 +25,6 @@ class NLQKCorpusTest(unittest.TestCase):
         self.assertEqual(True, download_simlex999())
 
 
-
-
 if __name__ == "__main__":
     unittest.main()
 

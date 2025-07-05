@@ -9,7 +9,7 @@ Testing the NLQK quantum state equality checking functionality.
 """
 
 import sys
-sys.path.append('../..')
+sys.path.append('.') # ./..')
 import os
 import unittest
 import numpy as np
