@@ -1,6 +1,6 @@
 ## Natural Language Qu Kit (NLQK) - a Quantum Natural Language Processing (Q-NLP) Library
 
-(C) 2024-2025 by [Damir Cavar], [NLP-Lab], [Quantum Study Group]
+(C) 2024-2025 by [Dr. Damir Cavar], [NLP-Lab], [Quantum Study Group]
 
 See for more details the [Natural Language Processing Lab] ([NLP-Lab]) and the [Quantum NLP Group](https://nlp-lab.org/quantumnlp/).
 
@@ -17,7 +17,7 @@ NLQK is a Quantum Computing toolkit for practical applications, experiments, and
 
 ## News
 
-- 2025/07/05 We integrated automatic switching between NumPy (`numpy`) and CuPy (`cupy`) for all NumPy and SciPy related function calls and data structures.
+- 2025/07/05 We integrated automatic switching between [NumPy] (`numpy`) and [CuPy] (`cupy`) for all [NumPy] and [SciPy] related function calls and data structures.
 
 
 
@@ -59,3 +59,7 @@ NLQK is a Quantum Computing toolkit for practical applications, experiments, and
 [NLP-Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 [Natural Language Processing Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 [Quantum Study Group]: https://nlp-lab.org/quantumnlp/ "Quantum Study Group"
+[NumPy]: https://numpy.org/ "NumPy"
+[CuPy]: https://cupy.dev/ "CuPy"
+[SciPy]: https://scipy.org/ "SciPy"
+
