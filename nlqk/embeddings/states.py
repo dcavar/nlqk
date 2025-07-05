@@ -1,20 +1,33 @@
+# coding: utf-8
 
 """
+states.py
 
+(C) 2025 by [Damir Cavar](http://damir.cavar.me/), James Bryan Graves, and [NLP Lab](https://nlp-lab.org/)
+
+Module: nlqk.embeddings.states
+
+Quantum state functions and tools.
 """
 
 
-import numpy as np
-from scipy.linalg import expm
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    from cupyx.scipy.linalg import expm
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    from scipy.linalg import expm
+    _USE_GPU = False
 from typing import Union, Sequence
 
 
-def hamiltonian_to_state(H: Union[np.ndarray, Sequence[Sequence[Union[int, float, complex]]]]) -> np.ndarray:
+def hamiltonian_to_state(H: np.ndarray) -> np.ndarray:
     """
     Reconstructs a quantum state |ψ⟩ = e^{iH} |0⟩ from the given Hamiltonian H.
 
     Args:
-        H (Union[np.ndarray, Sequence[Sequence[Union[int, float, complex]]]]): 
+        H np.ndarray: 
             Hamiltonian matrix (must be square with dimension 2^n for some integer n).
 
     Returns:
@@ -36,17 +49,13 @@ def hamiltonian_to_state(H: Union[np.ndarray, Sequence[Sequence[Union[int, float
     return psi
 
 
-def check_states_equal(
-    psi1: Union[np.ndarray, Sequence[Union[int, float, complex]]], 
-    psi2: Union[np.ndarray, Sequence[Union[int, float, complex]]], 
-    tol: float = 1e-6
-) -> bool:
+def check_states_equal(psi1: np.ndarray, psi2: np.ndarray, tol: float = 1e-6) -> bool:
     """
     Checks if two quantum states are equal up to a global phase factor.
 
     Args:
-        psi1 (Union[np.ndarray, Sequence[Union[int, float, complex]]]): First quantum state vector.
-        psi2 (Union[np.ndarray, Sequence[Union[int, float, complex]]]): Second quantum state vector.
+        psi1 np.ndarray: First quantum state vector.
+        psi2 np.ndarray: Second quantum state vector.
         tol (float): Tolerance for the comparison. Defaults to 1e-6.
 
     Returns:

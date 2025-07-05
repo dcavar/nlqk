@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# coding: utf-8
+
 
 """
 test_input_types.py
@@ -7,13 +9,18 @@ Testing that all declared input types work correctly with NLQK vector functions.
 """
 
 import sys
-sys.path.append('.') # ./..')
+sys.path.append('.')
 import unittest
-import numpy as np
-import os
-# sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
-
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    #from cupyx.scipy.linalg import expm
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    #from scipy.linalg import expm
+    _USE_GPU = False
 from nlqk.embeddings.vectors import cosine_similarity, normalize, pad_vector
+
 
 class TestInputTypes(unittest.TestCase):
     """Testing that all Union[Sequence[Union[int, float, complex]], np.ndarray] types work."""
@@ -132,6 +139,7 @@ class TestInputTypes(unittest.TestCase):
         np.testing.assert_array_almost_equal(result1, [1.0])
         np.testing.assert_array_almost_equal(result2, [1.0])
         np.testing.assert_array_almost_equal(result3, [1.0])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# coding: utf-8
+
 
 """
 test_is_normalized.py
@@ -6,14 +8,20 @@ test_is_normalized.py
 Testing the NLQK vectors is_normalized functionality.
 """
 
+
 import sys
 sys.path.append('.') # ./..')
 import unittest
-import numpy as np
-import os
-#sys.path.insert(0, os.path.join(os.path.dirname(__file__), '.'))
-
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    #from cupyx.scipy.linalg import expm
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    #from scipy.linalg import expm
+    _USE_GPU = False
 from nlqk.embeddings import is_normalized, normalize
+
 
 class TestIsNormalized(unittest.TestCase):
     """Testing the NLQK vectors is_normalized functionality."""
@@ -67,6 +75,7 @@ class TestIsNormalized(unittest.TestCase):
         
         vec2 = np.array([2.0+0j])  # Should not be normalized
         self.assertFalse(is_normalized(vec2))
+
 
 if __name__ == "__main__":
     unittest.main()

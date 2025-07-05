@@ -9,9 +9,14 @@ Testing the NLQK vectors functionality.
 """
 
 import sys
-sys.path.append('.') # ./..')
+sys.path.append('.')
 import unittest
-import numpy as np
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    _USE_GPU = False
 from nlqk.embeddings import normalize
 
 

@@ -1,19 +1,29 @@
 #!/usr/bin/env python3
+# coding: utf-8
+
 
 """
 test_hamiltonian_to_state.py
 
-(C) 2025 by [Damir Cavar](https://damir.cavar.me/) and [NLP Lab](https://nlp-lab.org/)
+(C) 2025 by [Damir Cavar](http://damir.cavar.me/), James Bryan Graves, and [NLP Lab](https://nlp-lab.org/)
 
 Testing the NLQK Hamiltonian to state conversion functionality.
 """
 
+
 import sys
-sys.path.append('.') # ./..')
-import os
+sys.path.append('.')
+# import os
 import unittest
-import numpy as np
-from scipy.linalg import expm
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    from cupyx.scipy.linalg import expm
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    from scipy.linalg import expm
+    _USE_GPU = False
+# import GPUtil  # If you're using GPUtil
 from nlqk.embeddings import hamiltonian_to_state, check_states_equal
 
 

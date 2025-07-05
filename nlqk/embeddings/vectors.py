@@ -1,16 +1,29 @@
+# coding: utf-8
 
 """
 vectors.py
 
-(C) 2025 by James Bryan Graves, Damir Cavar
+Module: nlqk.embeddings.vectors
+
+(C) 2025 by [Damir Cavar](http://damir.cavar.me/), James Bryan Graves, and [NLP Lab](https://nlp-lab.org/)
 
 Vector functionalities:
 
 """
 
 
-import numpy as np
 from typing import Union, Sequence
+# import torch     # If you're using PyTorch to check for GPU
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    _USE_GPU = False
+# import GPUtil  # If you're using GPUtil
+
+
+# Example Usage:
 
 
 def cosine_similarity(vec1: np.ndarray, vec2: np.ndarray, tol: float = 1e-12) -> float:

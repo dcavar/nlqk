@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# coding: utf-8
+
 
 """
 test_states_equal.py
@@ -8,11 +10,18 @@ test_states_equal.py
 Testing the NLQK quantum state equality checking functionality.
 """
 
+
 import sys
-sys.path.append('.') # ./..')
-import os
+sys.path.append('.')
 import unittest
-import numpy as np
+try: # prefer RAPIDS libraries and GPU over numpy and CPU
+    import cupy as np  # Try to import cupy and alias it as np
+    #from cupyx.scipy.linalg import expm
+    _USE_GPU = True
+except ModuleNotFoundError:
+    import numpy as np  # If cupy not found, import numpy and alias it as np
+    #from scipy.linalg import expm
+    _USE_GPU = False
 from nlqk.embeddings import check_states_equal
 
 
