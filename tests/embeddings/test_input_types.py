@@ -20,43 +20,43 @@ class TestInputTypes(unittest.TestCase):
 
     def test_lists_with_ints(self):
         """Test with lists containing integers"""
-        vec = [1, 2, 3]
+        vec = np.array([1, 2, 3])
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
     def test_lists_with_floats(self):
         """Test with lists containing floats"""
-        vec = [1.0, 2.0, 3.0]
+        vec = np.array([1.0, 2.0, 3.0])
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
     def test_lists_with_complex(self):
         """Test with lists containing complex numbers"""
-        vec = [1+1j, 2+2j]
+        vec = np.array([1+1j, 2+2j])
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
     def test_lists_mixed_types(self):
         """Test with lists containing mixed int/float"""
-        vec = [1, 2.5, 3]  # int, float, int
+        vec = np.array([1, 2.5, 3])  # int, float, int
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
     def test_tuples_with_ints(self):
         """Test with tuples containing integers"""
-        vec = (1, 2, 3)
+        vec = np.array( (1, 2, 3) )
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
     def test_tuples_with_floats(self):
         """Test with tuples containing floats"""
-        vec = (1.0, 2.0, 3.0)
+        vec = np.array( (1.0, 2.0, 3.0) )
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
     def test_tuples_with_complex(self):
         """Test with tuples containing complex numbers"""
-        vec = (1+1j, 2+2j)
+        vec = np.array( (1+1j, 2+2j) )
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
@@ -80,14 +80,14 @@ class TestInputTypes(unittest.TestCase):
 
     def test_range_objects(self):
         """Test with range objects (converted to list)"""
-        vec = list(range(1, 4))  # [1, 2, 3]
+        vec = np.array( list(range(1, 4)) ) # [1, 2, 3]
         result = normalize(vec)
         self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
     def test_cosine_similarity_mixed_input_types(self):
         """Test cosine similarity with different input types"""
-        vec1 = [1, 2, 3]           # list
-        vec2 = (1, 2, 3)           # tuple
+        vec1 = np.array([1, 2, 3])           # list
+        vec2 = np.array( (1, 2, 3) )          # tuple
         vec3 = np.array([1, 2, 3]) # numpy array
         
         # All should give the same result (cosine similarity = 1.0)
@@ -102,8 +102,8 @@ class TestInputTypes(unittest.TestCase):
     def test_pad_vector_mixed_input_types(self):
         """Test pad_vector with different input types"""
         # Test with different input types
-        list_input = [1, 2]
-        tuple_input = (1, 2)
+        list_input = np.array( [1, 2] )
+        tuple_input = np.array( (1, 2) )
         array_input = np.array([1, 2])
         
         result1 = pad_vector(list_input, 4)
@@ -120,8 +120,8 @@ class TestInputTypes(unittest.TestCase):
 
     def test_edge_case_single_element(self):
         """Test single element in different container types"""
-        list_vec = [5]
-        tuple_vec = (5,)
+        list_vec = np.array( [5] )
+        tuple_vec = np.array( (5,) )
         array_vec = np.array([5])
         
         result1 = normalize(list_vec)

@@ -20,36 +20,36 @@ class TestVectorsCosSim(unittest.TestCase):
 
     def test_cosine_similarity_identical_vectors(self):
         """Test cosine similarity of identical vectors should be 1.0"""
-        vec1 = [1, 2, 3, 4]
-        vec2 = [1, 2, 3, 4]
+        vec1 = np.array([1, 2, 3, 4])
+        vec2 = np.array([1, 2, 3, 4])
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=7)
 
     def test_cosine_similarity_orthogonal_vectors(self):
         """Test cosine similarity of orthogonal vectors should be 0.0"""
-        vec1 = [1, 0, 0]
-        vec2 = [0, 1, 0]
+        vec1 = np.array([1, 0, 0])
+        vec2 = np.array([0, 1, 0])
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 0.0, places=7)
 
     def test_cosine_similarity_opposite_vectors(self):
         """Test cosine similarity of opposite vectors should be -1.0"""
-        vec1 = [1, 2, 3]
-        vec2 = [-1, -2, -3]
+        vec1 = np.array([1, 2, 3])
+        vec2 = np.array([-1, -2, -3])
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, -1.0, places=7)
 
     def test_cosine_similarity_scaled_vectors(self):
         """Test cosine similarity of scaled vectors should be 1.0"""
-        vec1 = [1, 2, 3]
-        vec2 = [2, 4, 6]  # vec1 * 2
+        vec1 = np.array([1, 2, 3])
+        vec2 = np.array([2, 4, 6])  # vec1 * 2
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=7)
 
     def test_cosine_similarity_unit_vectors(self):
         """Test cosine similarity with unit vectors"""
-        vec1 = [1, 0]
-        vec2 = [0.6, 0.8]  # unit vector: sqrt(0.6^2 + 0.8^2) = 1
+        vec1 = np.array([1, 0])
+        vec2 = np.array([0.6, 0.8])  # unit vector: sqrt(0.6^2 + 0.8^2) = 1
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 0.6, places=7)
 
@@ -63,8 +63,8 @@ class TestVectorsCosSim(unittest.TestCase):
 
     def test_cosine_similarity_different_lengths_should_handle_gracefully(self):
         """Test that function handles vectors of different lengths"""
-        vec1 = [1, 2, 3]
-        vec2 = [1, 2]  # Different length
+        vec1 = np.array([1, 2, 3])
+        vec2 = np.array([1, 2])  # Different length
         # This should either work (numpy broadcasting) or raise an appropriate error
         try:
             result = cosine_similarity(vec1, vec2)
@@ -76,8 +76,8 @@ class TestVectorsCosSim(unittest.TestCase):
 
     def test_cosine_similarity_with_zeros(self):
         """Test cosine similarity with zero vectors"""
-        vec1 = [0, 0, 0]
-        vec2 = [1, 2, 3]
+        vec1 = np.array([0, 0, 0])
+        vec2 = np.array([1, 2, 3])
         
         # This should handle division by zero gracefully
         with self.assertRaises((ZeroDivisionError, RuntimeWarning)) or \
@@ -86,8 +86,8 @@ class TestVectorsCosSim(unittest.TestCase):
 
     def test_cosine_similarity_precision(self):
         """Test cosine similarity with high precision requirements"""
-        vec1 = [1e-10, 1e-10, 1e-10]
-        vec2 = [2e-10, 2e-10, 2e-10]
+        vec1 = np.array([1e-10, 1e-10, 1e-10])
+        vec2 = np.array([2e-10, 2e-10, 2e-10])
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=5)
 
@@ -106,44 +106,44 @@ class TestVectorsCosSim(unittest.TestCase):
     def test_cosine_similarity_known_values(self):
         """Test cosine similarity with known mathematical values"""
         # 45-degree angle vectors in 2D should have cos(45°) ≈ 0.707
-        vec1 = [1, 0]
-        vec2 = [1, 1]  # 45 degrees from vec1
+        vec1 = np.array([1, 0])
+        vec2 = np.array([1, 1])  # 45 degrees from vec1
         result = cosine_similarity(vec1, vec2)
         expected = 1 / np.sqrt(2)  # cos(45°) = 1/√2 ≈ 0.707
         self.assertAlmostEqual(result, expected, places=6)
 
     def test_cosine_similarity_complex_identical(self):
         """Test cosine similarity of identical complex vectors should be 1.0"""
-        vec1 = [1+2j, 3+4j]
-        vec2 = [1+2j, 3+4j]
+        vec1 = np.array([1+2j, 3+4j])
+        vec2 = np.array([1+2j, 3+4j])
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=7)
 
     def test_cosine_similarity_complex_scaled(self):
         """Test cosine similarity of scaled complex vectors should be 1.0"""
-        vec1 = [1+1j, 2+2j]
-        vec2 = [2+2j, 4+4j]  # vec1 * 2
+        vec1 = np.array([1+1j, 2+2j])
+        vec2 = np.array([2+2j, 4+4j])  # vec1 * 2
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=7)
 
     def test_cosine_similarity_complex_with_phase(self):
         """Test cosine similarity with complex vectors differing by global phase"""
-        vec1 = [1, 1j]
-        vec2 = [1j, -1]  # vec1 * i (global phase multiplication)
+        vec1 = np.array([1, 1j])
+        vec2 = np.array([1j, -1])  # vec1 * i (global phase multiplication)
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=7)
 
     def test_cosine_similarity_complex_orthogonal(self):
         """Test cosine similarity of orthogonal complex vectors should be 0.0"""
-        vec1 = [1, 0]
-        vec2 = [0, 1j]  # Orthogonal in complex space
+        vec1 = np.array([1, 0])
+        vec2 = np.array([0, 1j])  # Orthogonal in complex space
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 0.0, places=7)
 
     def test_cosine_similarity_complex_conjugate(self):
         """Test cosine similarity between a vector and its complex conjugate"""
-        vec1 = [1+2j, 3+4j]
-        vec2 = [1-2j, 3-4j]  # Complex conjugate
+        vec1 = np.array([1+2j, 3+4j])
+        vec2 = np.array([1-2j, 3-4j])  # Complex conjugate
         result = cosine_similarity(vec1, vec2)
         
         # For complex conjugates: <v1|v2> = (1-2j)*(1-2j) + (3-4j)*(3-4j)
@@ -166,8 +166,8 @@ class TestVectorsCosSim(unittest.TestCase):
 
     def test_cosine_similarity_complex_mixed_real_imag(self):
         """Test cosine similarity with mixed real and complex components"""
-        vec1 = [1, 2j, 3, 4j]
-        vec2 = [2, 4j, 6, 8j]  # vec1 * 2
+        vec1 = np.array([1, 2j, 3, 4j])
+        vec2 = np.array([2, 4j, 6, 8j])  # vec1 * 2
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=7)
 
@@ -185,23 +185,23 @@ class TestVectorsCosSim(unittest.TestCase):
 
     def test_cosine_similarity_complex_pure_imaginary(self):
         """Test cosine similarity with pure imaginary vectors"""
-        vec1 = [1j, 2j, 3j]
-        vec2 = [2j, 4j, 6j]  # vec1 * 2
+        vec1 = np.array([1j, 2j, 3j])
+        vec2 = np.array([2j, 4j, 6j])  # vec1 * 2
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=7)
 
     def test_cosine_similarity_complex_opposite_direction(self):
         """Test cosine similarity of complex vectors in opposite directions"""
-        vec1 = [1+1j, 2+2j]
-        vec2 = [-1-1j, -2-2j]  # vec1 * (-1)
+        vec1 = np.array([1+1j, 2+2j])
+        vec2 = np.array([-1-1j, -2-2j])  # vec1 * (-1)
         result = cosine_similarity(vec1, vec2)
         # With abs(), opposite vectors still give similarity = 1.0
         self.assertAlmostEqual(result, 1.0, places=7)
 
     def test_cosine_similarity_complex_return_type(self):
         """Test that complex vector similarity returns real number"""
-        vec1 = [1+2j, 3+4j]
-        vec2 = [2+1j, 4+3j]
+        vec1 = np.array([1+2j, 3+4j])
+        vec2 = np.array([2+1j, 4+3j])
         result = cosine_similarity(vec1, vec2)
         
         # Result should be real-valued
@@ -214,8 +214,8 @@ class TestVectorsCosSim(unittest.TestCase):
 
     def test_cosine_similarity_complex_precision(self):
         """Test cosine similarity with high precision complex vectors"""
-        vec1 = [1e-10 + 1e-10j, 2e-10 + 2e-10j]
-        vec2 = [3e-10 + 3e-10j, 6e-10 + 6e-10j]  # vec1 * 3
+        vec1 = np.array([1e-10 + 1e-10j, 2e-10 + 2e-10j])
+        vec2 = np.array([3e-10 + 3e-10j, 6e-10 + 6e-10j])  # vec1 * 3
         result = cosine_similarity(vec1, vec2)
         self.assertAlmostEqual(result, 1.0, places=5)
 

@@ -20,7 +20,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_basic(self):
         """Test basic vector padding functionality"""
-        vector = [1, 2, 3]
+        vector = np.array([1, 2, 3])
         target_size = 5
         result = pad_vector(vector, target_size)
         expected = np.array([1+0j, 2+0j, 3+0j, 0+0j, 0+0j])
@@ -28,7 +28,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_complex_input(self):
         """Test padding with complex input vector"""
-        vector = [1+2j, 3+4j]
+        vector = np.array([1+2j, 3+4j])
         target_size = 4
         result = pad_vector(vector, target_size)
         expected = np.array([1+2j, 3+4j, 0+0j, 0+0j])
@@ -36,7 +36,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_exact_size(self):
         """Test padding when vector is exactly target size"""
-        vector = [1, 2, 3, 4]
+        vector = np.array([1, 2, 3, 4])
         target_size = 4
         result = pad_vector(vector, target_size)
         expected = np.array([1+0j, 2+0j, 3+0j, 4+0j])
@@ -44,7 +44,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_power_of_two(self):
         """Test padding to power of 2 sizes"""
-        vector = [1, 2, 3]
+        vector = np.array([1, 2, 3])
         target_size = 8  # 2^3
         result = pad_vector(vector, target_size)
         expected = np.array([1+0j, 2+0j, 3+0j, 0+0j, 0+0j, 0+0j, 0+0j, 0+0j])
@@ -60,7 +60,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_empty_vector(self):
         """Test padding empty vector"""
-        vector = []
+        vector = np.array([])
         target_size = 3
         result = pad_vector(vector, target_size)
         expected = np.array([0+0j, 0+0j, 0+0j])
@@ -68,7 +68,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_single_element(self):
         """Test padding single element vector"""
-        vector = [42]
+        vector = np.array([42])
         target_size = 4
         result = pad_vector(vector, target_size)
         expected = np.array([42+0j, 0+0j, 0+0j, 0+0j])
@@ -76,7 +76,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_negative_values(self):
         """Test padding with negative values"""
-        vector = [-1, -2, 3]
+        vector = np.array([-1, -2, 3])
         target_size = 5
         result = pad_vector(vector, target_size)
         expected = np.array([-1+0j, -2+0j, 3+0j, 0+0j, 0+0j])
@@ -84,7 +84,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_zeros_in_input(self):
         """Test padding vector that already contains zeros"""
-        vector = [1, 0, 2, 0]
+        vector = np.array([1, 0, 2, 0])
         target_size = 6
         result = pad_vector(vector, target_size)
         expected = np.array([1+0j, 0+0j, 2+0j, 0+0j, 0+0j, 0+0j])
@@ -92,7 +92,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_too_large_raises_error(self):
         """Test that vector larger than target size raises ValueError"""
-        vector = [1, 2, 3, 4, 5]
+        vector = np.array([1, 2, 3, 4, 5])
         target_size = 3
         with self.assertRaises(ValueError) as context:
             pad_vector(vector, target_size)
@@ -100,7 +100,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_zero_target_size(self):
         """Test padding with zero target size"""
-        vector = []
+        vector = np.array([])
         target_size = 0
         result = pad_vector(vector, target_size)
         expected = np.array([], dtype=complex)
@@ -108,7 +108,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_zero_target_size_with_data_raises_error(self):
         """Test that non-empty vector with zero target size raises error"""
-        vector = [1, 2]
+        vector = np.array([1, 2])
         target_size = 0
         with self.assertRaises(ValueError) as context:
             pad_vector(vector, target_size)
@@ -116,7 +116,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_return_type(self):
         """Test that function returns numpy array with complex dtype"""
-        vector = [1, 2, 3]
+        vector = np.array([1, 2, 3])
         target_size = 5
         result = pad_vector(vector, target_size)
         
@@ -132,7 +132,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_preserves_original_values(self):
         """Test that padding preserves original vector values"""
-        vector = [1.1, 2.2, 3.3]
+        vector = np.array([1.1, 2.2, 3.3])
         target_size = 7
         result = pad_vector(vector, target_size)
         
@@ -147,7 +147,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_very_small_values(self):
         """Test padding with very small values"""
-        vector = [1e-15, 2e-15]
+        vector = np.array([1e-15, 2e-15])
         target_size = 4
         result = pad_vector(vector, target_size)
         expected = np.array([1e-15+0j, 2e-15+0j, 0+0j, 0+0j])
@@ -155,7 +155,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_very_large_values(self):
         """Test padding with very large values"""
-        vector = [1e10, 2e10]
+        vector = np.array([1e10, 2e10])
         target_size = 5
         result = pad_vector(vector, target_size)
         expected = np.array([1e10+0j, 2e10+0j, 0+0j, 0+0j, 0+0j])
@@ -163,7 +163,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_mixed_complex_real(self):
         """Test padding with mixed complex and real values"""
-        vector = [1, 2+3j, 4]
+        vector = np.array([1, 2+3j, 4])
         target_size = 6
         result = pad_vector(vector, target_size)
         expected = np.array([1+0j, 2+3j, 4+0j, 0+0j, 0+0j, 0+0j])
@@ -171,7 +171,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_large_target_size(self):
         """Test padding to very large target size"""
-        vector = [1, 2]
+        vector = np.array([1, 2])
         target_size = 1000
         result = pad_vector(vector, target_size)
         
@@ -204,7 +204,7 @@ class TestVectorsPad(unittest.TestCase):
 
     def test_pad_vector_edge_case_one_element_to_one(self):
         """Test edge case: padding one element to size one"""
-        vector = [5]
+        vector = np.array([5])
         target_size = 1
         result = pad_vector(vector, target_size)
         expected = np.array([5+0j])
