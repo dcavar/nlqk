@@ -1,6 +1,6 @@
 # NLQK - Natural Language Qu Kit - Python Quantum NLP Tools
 
-(C) 2024 by [Damir Cavar], NLP-Lab
+(C) 2024-2025 by [Damir Cavar], [NLP-Lab]
 
 
 ## Prerequisites
@@ -29,4 +29,9 @@ Run the following command:
     twine upload dist/*
 
 Use `tox` to validate the code.
+
+
+
+[Damir Cavar]: http://damir.cavar.me/ "Damir Cavar"
+[NLP-Lab]: https://nlp-lab.org/ "Natural Language Processing Lab"
 

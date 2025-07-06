@@ -2,10 +2,22 @@
 
 (C) 2024-2025 by [Damir Cavar], [NLP-Lab]
 
+Natural Language Qu Kit (NLQK) is a toolkit for Quantum AI (QAI) and Natural Language Processing (Q-NLP).
 
-Natural Language Qu Kit (NLQK) is a toolkit for Quantum Natural Language Processing (Q-NLP).
+This is an [Natural Language Processing Lab] ([NLP-Lab]) project.
 
-This is an [Natural Language Processing Lab] project.
+
+## Contributors
+
+- [Dr. Damir Cavar]
+- [Billy Dickson]
+- [James Bryan Graves]
+- [Koushik Reddy Parukola]
+- [Shane A. Sparks]
+
+
+
+## Introduction
 
 What is the goal of this project?
 
@@ -71,14 +83,6 @@ Run the shell script (e.g., using bash):
   ./create_doc.sh
 
 
-
-## Contributors
-
-- [Dr. Damir Cavar]
-- [Billy Dickson]
-- [James Bryan Graves]
-- [Koushik Reddy Parukola]
-- [Shane A. Sparks]
 
 
 

@@ -17,6 +17,7 @@ import os
 import unittest
 if os.getenv("GITHUB_ACTIONS") == "true":
     import numpy as np
+    from scipy.linalg import expm
 else:
     try: # prefer RAPIDS libraries and GPU over numpy and CPU
         import cupy as np  # Try to import cupy and alias it as np
