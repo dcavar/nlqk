@@ -78,64 +78,68 @@
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="k">try</span><span class="p">:</span> <span class="c1"># prefer RAPIDS libraries and GPU over numpy and CPU</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># Try to import cupy and alias it as np</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="kn">from</span> <span class="nn">cupyx.scipy.linalg</span> <span class="kn">import</span> <span class="n">expm</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="n">_USE_GPU</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># If cupy not found, import numpy and alias it as np</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">expm</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">_USE_GPU</span> <span class="o">=</span> <span class="kc">False</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="k">def</span> <span class="nf">hamiltonian_to_state</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    Reconstructs a quantum state |ψ⟩ = e^{iH} |0⟩ from the given Hamiltonian H.</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">import</span> <span class="nn">os</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GITHUB_ACTIONS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">else</span><span class="p">:</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="k">try</span><span class="p">:</span> <span class="c1"># prefer RAPIDS libraries and GPU over numpy and CPU</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>        <span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># Try to import cupy and alias it as np</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>        <span class="kn">from</span> <span class="nn">cupyx.scipy.linalg</span> <span class="kn">import</span> <span class="n">expm</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="n">_USE_GPU</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># If cupy not found, import numpy and alias it as np</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">expm</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">_USE_GPU</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Sequence</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">    Args:</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        H np.ndarray: </span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">            Hamiltonian matrix (must be square with dimension 2^n for some integer n).</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="k">def</span> <span class="nf">hamiltonian_to_state</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    Reconstructs a quantum state |ψ⟩ = e^{iH} |0⟩ from the given Hamiltonian H.</span>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    Returns:</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        np.ndarray: Complex quantum state vector |ψ⟩ obtained by applying e^{iH} to |0⟩.</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">    Raises:</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">        ValueError: If H is not a square matrix or dimension is not a power of 2.</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="n">n_qubits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="n">dim</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">zero_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">zero_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="n">U</span> <span class="o">=</span> <span class="n">expm</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">H</span><span class="p">)</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">psi</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">zero_state</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">    Args:</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        H np.ndarray: </span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">            Hamiltonian matrix (must be square with dimension 2^n for some integer n).</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    Returns:</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">        np.ndarray: Complex quantum state vector |ψ⟩ obtained by applying e^{iH} to |0⟩.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    Raises:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">        ValueError: If H is not a square matrix or dimension is not a power of 2.</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">n_qubits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">dim</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="n">zero_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>    <span class="n">zero_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="k">return</span> <span class="n">psi</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>    <span class="n">U</span> <span class="o">=</span> <span class="n">expm</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">H</span><span class="p">)</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="k">def</span> <span class="nf">check_states_equal</span><span class="p">(</span><span class="n">psi1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">psi2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">    Checks if two quantum states are equal up to a global phase factor.</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="n">psi</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">zero_state</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">return</span> <span class="n">psi</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
 </span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">    Args:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        psi1 np.ndarray: First quantum state vector.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">        psi2 np.ndarray: Second quantum state vector.</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">        tol (float): Tolerance for the comparison. Defaults to 1e-6.</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">    Returns:</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        bool: True if the states are equal up to global phase, False otherwise.</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a><span class="sd">    Note:</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">        Two quantum states |ψ₁⟩ and |ψ₂⟩ are considered equal if |⟨ψ₁|ψ₂⟩| = 1,</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">        meaning they differ only by a global phase factor e^{iθ}.</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>    <span class="n">psi1</span> <span class="o">=</span> <span class="n">psi1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi1</span><span class="p">)</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="n">psi2</span> <span class="o">=</span> <span class="n">psi2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi2</span><span class="p">)</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="n">inner_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vdot</span><span class="p">(</span><span class="n">psi1</span><span class="p">,</span> <span class="n">psi2</span><span class="p">))</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">inner_product</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="k">def</span> <span class="nf">check_states_equal</span><span class="p">(</span><span class="n">psi1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">psi2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">    Checks if two quantum states are equal up to a global phase factor.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">    Args:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        psi1 np.ndarray: First quantum state vector.</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        psi2 np.ndarray: Second quantum state vector.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">        tol (float): Tolerance for the comparison. Defaults to 1e-6.</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">    Returns:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">        bool: True if the states are equal up to global phase, False otherwise.</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">    Note:</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">        Two quantum states |ψ₁⟩ and |ψ₂⟩ are considered equal if |⟨ψ₁|ψ₂⟩| = 1,</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">        meaning they differ only by a global phase factor e^{iθ}.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>    <span class="n">psi1</span> <span class="o">=</span> <span class="n">psi1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi1</span><span class="p">)</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>    <span class="n">psi2</span> <span class="o">=</span> <span class="n">psi2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi2</span><span class="p">)</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="n">inner_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vdot</span><span class="p">(</span><span class="n">psi1</span><span class="p">,</span> <span class="n">psi2</span><span class="p">))</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">inner_product</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -151,31 +155,31 @@
 
     </div>
     <a class="headerlink" href="#hamiltonian_to_state"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="hamiltonian_to_state-26"><a href="#hamiltonian_to_state-26"><span class="linenos">26</span></a><span class="k">def</span> <span class="nf">hamiltonian_to_state</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-</span><span id="hamiltonian_to_state-27"><a href="#hamiltonian_to_state-27"><span class="linenos">27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="hamiltonian_to_state-28"><a href="#hamiltonian_to_state-28"><span class="linenos">28</span></a><span class="sd">    Reconstructs a quantum state |ψ⟩ = e^{iH} |0⟩ from the given Hamiltonian H.</span>
-</span><span id="hamiltonian_to_state-29"><a href="#hamiltonian_to_state-29"><span class="linenos">29</span></a>
-</span><span id="hamiltonian_to_state-30"><a href="#hamiltonian_to_state-30"><span class="linenos">30</span></a><span class="sd">    Args:</span>
-</span><span id="hamiltonian_to_state-31"><a href="#hamiltonian_to_state-31"><span class="linenos">31</span></a><span class="sd">        H np.ndarray: </span>
-</span><span id="hamiltonian_to_state-32"><a href="#hamiltonian_to_state-32"><span class="linenos">32</span></a><span class="sd">            Hamiltonian matrix (must be square with dimension 2^n for some integer n).</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="hamiltonian_to_state-30"><a href="#hamiltonian_to_state-30"><span class="linenos">30</span></a><span class="k">def</span> <span class="nf">hamiltonian_to_state</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="hamiltonian_to_state-31"><a href="#hamiltonian_to_state-31"><span class="linenos">31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="hamiltonian_to_state-32"><a href="#hamiltonian_to_state-32"><span class="linenos">32</span></a><span class="sd">    Reconstructs a quantum state |ψ⟩ = e^{iH} |0⟩ from the given Hamiltonian H.</span>
 </span><span id="hamiltonian_to_state-33"><a href="#hamiltonian_to_state-33"><span class="linenos">33</span></a>
-</span><span id="hamiltonian_to_state-34"><a href="#hamiltonian_to_state-34"><span class="linenos">34</span></a><span class="sd">    Returns:</span>
-</span><span id="hamiltonian_to_state-35"><a href="#hamiltonian_to_state-35"><span class="linenos">35</span></a><span class="sd">        np.ndarray: Complex quantum state vector |ψ⟩ obtained by applying e^{iH} to |0⟩.</span>
-</span><span id="hamiltonian_to_state-36"><a href="#hamiltonian_to_state-36"><span class="linenos">36</span></a>
-</span><span id="hamiltonian_to_state-37"><a href="#hamiltonian_to_state-37"><span class="linenos">37</span></a><span class="sd">    Raises:</span>
-</span><span id="hamiltonian_to_state-38"><a href="#hamiltonian_to_state-38"><span class="linenos">38</span></a><span class="sd">        ValueError: If H is not a square matrix or dimension is not a power of 2.</span>
-</span><span id="hamiltonian_to_state-39"><a href="#hamiltonian_to_state-39"><span class="linenos">39</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="hamiltonian_to_state-40"><a href="#hamiltonian_to_state-40"><span class="linenos">40</span></a>    <span class="n">n_qubits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-</span><span id="hamiltonian_to_state-41"><a href="#hamiltonian_to_state-41"><span class="linenos">41</span></a>    <span class="n">dim</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span>
-</span><span id="hamiltonian_to_state-42"><a href="#hamiltonian_to_state-42"><span class="linenos">42</span></a>
-</span><span id="hamiltonian_to_state-43"><a href="#hamiltonian_to_state-43"><span class="linenos">43</span></a>    <span class="n">zero_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
-</span><span id="hamiltonian_to_state-44"><a href="#hamiltonian_to_state-44"><span class="linenos">44</span></a>    <span class="n">zero_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
-</span><span id="hamiltonian_to_state-45"><a href="#hamiltonian_to_state-45"><span class="linenos">45</span></a>
-</span><span id="hamiltonian_to_state-46"><a href="#hamiltonian_to_state-46"><span class="linenos">46</span></a>    <span class="n">U</span> <span class="o">=</span> <span class="n">expm</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">H</span><span class="p">)</span>
-</span><span id="hamiltonian_to_state-47"><a href="#hamiltonian_to_state-47"><span class="linenos">47</span></a>
-</span><span id="hamiltonian_to_state-48"><a href="#hamiltonian_to_state-48"><span class="linenos">48</span></a>    <span class="n">psi</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">zero_state</span>
+</span><span id="hamiltonian_to_state-34"><a href="#hamiltonian_to_state-34"><span class="linenos">34</span></a><span class="sd">    Args:</span>
+</span><span id="hamiltonian_to_state-35"><a href="#hamiltonian_to_state-35"><span class="linenos">35</span></a><span class="sd">        H np.ndarray: </span>
+</span><span id="hamiltonian_to_state-36"><a href="#hamiltonian_to_state-36"><span class="linenos">36</span></a><span class="sd">            Hamiltonian matrix (must be square with dimension 2^n for some integer n).</span>
+</span><span id="hamiltonian_to_state-37"><a href="#hamiltonian_to_state-37"><span class="linenos">37</span></a>
+</span><span id="hamiltonian_to_state-38"><a href="#hamiltonian_to_state-38"><span class="linenos">38</span></a><span class="sd">    Returns:</span>
+</span><span id="hamiltonian_to_state-39"><a href="#hamiltonian_to_state-39"><span class="linenos">39</span></a><span class="sd">        np.ndarray: Complex quantum state vector |ψ⟩ obtained by applying e^{iH} to |0⟩.</span>
+</span><span id="hamiltonian_to_state-40"><a href="#hamiltonian_to_state-40"><span class="linenos">40</span></a>
+</span><span id="hamiltonian_to_state-41"><a href="#hamiltonian_to_state-41"><span class="linenos">41</span></a><span class="sd">    Raises:</span>
+</span><span id="hamiltonian_to_state-42"><a href="#hamiltonian_to_state-42"><span class="linenos">42</span></a><span class="sd">        ValueError: If H is not a square matrix or dimension is not a power of 2.</span>
+</span><span id="hamiltonian_to_state-43"><a href="#hamiltonian_to_state-43"><span class="linenos">43</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="hamiltonian_to_state-44"><a href="#hamiltonian_to_state-44"><span class="linenos">44</span></a>    <span class="n">n_qubits</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+</span><span id="hamiltonian_to_state-45"><a href="#hamiltonian_to_state-45"><span class="linenos">45</span></a>    <span class="n">dim</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">n_qubits</span>
+</span><span id="hamiltonian_to_state-46"><a href="#hamiltonian_to_state-46"><span class="linenos">46</span></a>
+</span><span id="hamiltonian_to_state-47"><a href="#hamiltonian_to_state-47"><span class="linenos">47</span></a>    <span class="n">zero_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+</span><span id="hamiltonian_to_state-48"><a href="#hamiltonian_to_state-48"><span class="linenos">48</span></a>    <span class="n">zero_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
 </span><span id="hamiltonian_to_state-49"><a href="#hamiltonian_to_state-49"><span class="linenos">49</span></a>
-</span><span id="hamiltonian_to_state-50"><a href="#hamiltonian_to_state-50"><span class="linenos">50</span></a>    <span class="k">return</span> <span class="n">psi</span>
+</span><span id="hamiltonian_to_state-50"><a href="#hamiltonian_to_state-50"><span class="linenos">50</span></a>    <span class="n">U</span> <span class="o">=</span> <span class="n">expm</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">H</span><span class="p">)</span>
+</span><span id="hamiltonian_to_state-51"><a href="#hamiltonian_to_state-51"><span class="linenos">51</span></a>
+</span><span id="hamiltonian_to_state-52"><a href="#hamiltonian_to_state-52"><span class="linenos">52</span></a>    <span class="n">psi</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">zero_state</span>
+</span><span id="hamiltonian_to_state-53"><a href="#hamiltonian_to_state-53"><span class="linenos">53</span></a>
+</span><span id="hamiltonian_to_state-54"><a href="#hamiltonian_to_state-54"><span class="linenos">54</span></a>    <span class="k">return</span> <span class="n">psi</span>
 </span></pre></div>
 
 
@@ -205,26 +209,26 @@
 
     </div>
     <a class="headerlink" href="#check_states_equal"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="check_states_equal-53"><a href="#check_states_equal-53"><span class="linenos">53</span></a><span class="k">def</span> <span class="nf">check_states_equal</span><span class="p">(</span><span class="n">psi1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">psi2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="check_states_equal-54"><a href="#check_states_equal-54"><span class="linenos">54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="check_states_equal-55"><a href="#check_states_equal-55"><span class="linenos">55</span></a><span class="sd">    Checks if two quantum states are equal up to a global phase factor.</span>
-</span><span id="check_states_equal-56"><a href="#check_states_equal-56"><span class="linenos">56</span></a>
-</span><span id="check_states_equal-57"><a href="#check_states_equal-57"><span class="linenos">57</span></a><span class="sd">    Args:</span>
-</span><span id="check_states_equal-58"><a href="#check_states_equal-58"><span class="linenos">58</span></a><span class="sd">        psi1 np.ndarray: First quantum state vector.</span>
-</span><span id="check_states_equal-59"><a href="#check_states_equal-59"><span class="linenos">59</span></a><span class="sd">        psi2 np.ndarray: Second quantum state vector.</span>
-</span><span id="check_states_equal-60"><a href="#check_states_equal-60"><span class="linenos">60</span></a><span class="sd">        tol (float): Tolerance for the comparison. Defaults to 1e-6.</span>
-</span><span id="check_states_equal-61"><a href="#check_states_equal-61"><span class="linenos">61</span></a>
-</span><span id="check_states_equal-62"><a href="#check_states_equal-62"><span class="linenos">62</span></a><span class="sd">    Returns:</span>
-</span><span id="check_states_equal-63"><a href="#check_states_equal-63"><span class="linenos">63</span></a><span class="sd">        bool: True if the states are equal up to global phase, False otherwise.</span>
-</span><span id="check_states_equal-64"><a href="#check_states_equal-64"><span class="linenos">64</span></a>
-</span><span id="check_states_equal-65"><a href="#check_states_equal-65"><span class="linenos">65</span></a><span class="sd">    Note:</span>
-</span><span id="check_states_equal-66"><a href="#check_states_equal-66"><span class="linenos">66</span></a><span class="sd">        Two quantum states |ψ₁⟩ and |ψ₂⟩ are considered equal if |⟨ψ₁|ψ₂⟩| = 1,</span>
-</span><span id="check_states_equal-67"><a href="#check_states_equal-67"><span class="linenos">67</span></a><span class="sd">        meaning they differ only by a global phase factor e^{iθ}.</span>
-</span><span id="check_states_equal-68"><a href="#check_states_equal-68"><span class="linenos">68</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="check_states_equal-69"><a href="#check_states_equal-69"><span class="linenos">69</span></a>    <span class="n">psi1</span> <span class="o">=</span> <span class="n">psi1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi1</span><span class="p">)</span>
-</span><span id="check_states_equal-70"><a href="#check_states_equal-70"><span class="linenos">70</span></a>    <span class="n">psi2</span> <span class="o">=</span> <span class="n">psi2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi2</span><span class="p">)</span>
-</span><span id="check_states_equal-71"><a href="#check_states_equal-71"><span class="linenos">71</span></a>    <span class="n">inner_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vdot</span><span class="p">(</span><span class="n">psi1</span><span class="p">,</span> <span class="n">psi2</span><span class="p">))</span>
-</span><span id="check_states_equal-72"><a href="#check_states_equal-72"><span class="linenos">72</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">inner_product</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="check_states_equal-57"><a href="#check_states_equal-57"><span class="linenos">57</span></a><span class="k">def</span> <span class="nf">check_states_equal</span><span class="p">(</span><span class="n">psi1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">psi2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="check_states_equal-58"><a href="#check_states_equal-58"><span class="linenos">58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="check_states_equal-59"><a href="#check_states_equal-59"><span class="linenos">59</span></a><span class="sd">    Checks if two quantum states are equal up to a global phase factor.</span>
+</span><span id="check_states_equal-60"><a href="#check_states_equal-60"><span class="linenos">60</span></a>
+</span><span id="check_states_equal-61"><a href="#check_states_equal-61"><span class="linenos">61</span></a><span class="sd">    Args:</span>
+</span><span id="check_states_equal-62"><a href="#check_states_equal-62"><span class="linenos">62</span></a><span class="sd">        psi1 np.ndarray: First quantum state vector.</span>
+</span><span id="check_states_equal-63"><a href="#check_states_equal-63"><span class="linenos">63</span></a><span class="sd">        psi2 np.ndarray: Second quantum state vector.</span>
+</span><span id="check_states_equal-64"><a href="#check_states_equal-64"><span class="linenos">64</span></a><span class="sd">        tol (float): Tolerance for the comparison. Defaults to 1e-6.</span>
+</span><span id="check_states_equal-65"><a href="#check_states_equal-65"><span class="linenos">65</span></a>
+</span><span id="check_states_equal-66"><a href="#check_states_equal-66"><span class="linenos">66</span></a><span class="sd">    Returns:</span>
+</span><span id="check_states_equal-67"><a href="#check_states_equal-67"><span class="linenos">67</span></a><span class="sd">        bool: True if the states are equal up to global phase, False otherwise.</span>
+</span><span id="check_states_equal-68"><a href="#check_states_equal-68"><span class="linenos">68</span></a>
+</span><span id="check_states_equal-69"><a href="#check_states_equal-69"><span class="linenos">69</span></a><span class="sd">    Note:</span>
+</span><span id="check_states_equal-70"><a href="#check_states_equal-70"><span class="linenos">70</span></a><span class="sd">        Two quantum states |ψ₁⟩ and |ψ₂⟩ are considered equal if |⟨ψ₁|ψ₂⟩| = 1,</span>
+</span><span id="check_states_equal-71"><a href="#check_states_equal-71"><span class="linenos">71</span></a><span class="sd">        meaning they differ only by a global phase factor e^{iθ}.</span>
+</span><span id="check_states_equal-72"><a href="#check_states_equal-72"><span class="linenos">72</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="check_states_equal-73"><a href="#check_states_equal-73"><span class="linenos">73</span></a>    <span class="n">psi1</span> <span class="o">=</span> <span class="n">psi1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi1</span><span class="p">)</span>
+</span><span id="check_states_equal-74"><a href="#check_states_equal-74"><span class="linenos">74</span></a>    <span class="n">psi2</span> <span class="o">=</span> <span class="n">psi2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">psi2</span><span class="p">)</span>
+</span><span id="check_states_equal-75"><a href="#check_states_equal-75"><span class="linenos">75</span></a>    <span class="n">inner_product</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vdot</span><span class="p">(</span><span class="n">psi1</span><span class="p">,</span> <span class="n">psi2</span><span class="p">))</span>
+</span><span id="check_states_equal-76"><a href="#check_states_equal-76"><span class="linenos">76</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">inner_product</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
 </span></pre></div>
 
 

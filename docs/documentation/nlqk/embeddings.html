@@ -33,6 +33,16 @@
                     <li><a href="embeddings/vectors.html">vectors</a></li>
             </ul>
 
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="function" href="#get_openai_embeddings">get_openai_embeddings</a>
+            </li>
+            <li>
+                    <a class="function" href="#get_embeddings">get_embeddings</a>
+            </li>
+    </ul>
+
 
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
@@ -49,7 +59,9 @@
 
                         <div class="docstring"><p>embedding.py</p>
 
-<p>(C) 2025 Damir Cavar</p>
+<p>(C) 2025 by <a href="http://damir.cavar.me/">Damir Cavar</a> and the <a href="https://nlp-lab.org/">NLP Lab</a></p>
+
+<p>Module: <a href="embeddings/states.html">nlqk.embeddings.states</a></p>
 </div>
 
                         <input id="mod-embeddings-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -59,61 +71,151 @@
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="ch">#!/usr/bin/env python</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="c1"># -*- coding: utf-8 -*-</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">embedding.py</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">(C) 2025 Damir Cavar</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="kn">from</span> <span class="nn">.vectors</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="n">is_normalized</span><span class="p">,</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="n">normalize</span><span class="p">,</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="n">pad_vector</span><span class="p">,</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="n">pair_real_to_complex</span><span class="p">,</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">cosine_similarity</span><span class="p">,</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="p">)</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="kn">from</span> <span class="nn">.states</span> <span class="kn">import</span> <span class="p">(</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="n">hamiltonian_to_state</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="n">check_states_equal</span><span class="p">,</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="p">)</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="c1"># import numpy as np</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="c1"># def is_normalized(vector: np.ndarray, tolerance: float=1e-9) -&gt; np.bool_:</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="c1">#     &quot;&quot;&quot;</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="c1">#     Checks if a NumPy vector is normalized (its L2 norm is approximately 1).</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="c1">#     Args:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="c1">#         vector (np.ndarray): The input NumPy vector.</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="c1">#         tolerance (float): The allowed tolerance for comparison with 1.</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="c1">#     Returns:</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="c1">#         bool: True if the vector is normalized, False otherwise.</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="c1">#     &quot;&quot;&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="c1">#     norm = np.linalg.norm(vector)</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="c1">#     return np.isclose(norm, 1.0, atol=tolerance)</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">embedding.py</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">(C) 2025 by [Damir Cavar](http://damir.cavar.me/) and the [NLP Lab](https://nlp-lab.org/)</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">Module: nlqk.embeddings.states</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">import</span> <span class="nn">os</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GITHUB_ACTIONS&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="k">else</span><span class="p">:</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="k">try</span><span class="p">:</span> <span class="c1"># prefer RAPIDS libraries and GPU over numpy and CPU</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>        <span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># Try to import cupy and alias it as np</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>        <span class="n">_USE_GPU</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>        <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># If cupy not found, import numpy and alias it as np</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>        <span class="n">_USE_GPU</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="kn">from</span> <span class="nn">nlqk.defaults</span> <span class="kn">import</span> <span class="n">OPEN_AI_EMBEDDING_MODELS</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="c1">#from .vectors import (</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="c1">#    is_normalized,</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="c1">#    normalize,</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="c1">#    pad_vector,</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="c1">#    pair_real_to_complex,</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="c1">#    cosine_similarity,</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="c1">#)</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="c1">#from .states import (</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="c1">#    hamiltonian_to_state,</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="c1">#    check_states_equal,</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="c1">#)</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="c1"># def normalize(v: np.ndarray) -&gt; np.ndarray:</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="c1"># 	&quot;&quot;&quot;Normalize the vector to have a length of 1.&quot;&quot;&quot;</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="c1"># 	return v / np.linalg.norm(v)</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="c1"># def pad_vectors(vectors: np.ndarray, size: int) -&gt; np.ndarray:</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="c1">#     &quot;&quot;&quot;Pad rows with zeros to size.&quot;&quot;&quot;</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="c1">#     return np.pad(vectors, [(0, 0), (0, size - vectors.shape[1])], mode=&#39;constant&#39;)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="c1"># def pad_vector(v: np.ndarray, size: int) -&gt; np.ndarray:</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="c1">#     &quot;&quot;&quot;Pad the vector with zeros to size.&quot;&quot;&quot;</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="c1">#     return np.pad(v, (0, 9 - v.shape[0]), mode=&#39;constant&#39;)</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="k">def</span> <span class="nf">get_openai_embeddings</span><span class="p">(</span><span class="n">wordlist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">api_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;large&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the GPT embeddings for a wordlist.</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">    Args:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        wordlist List of str: List of words.</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">        api_key str: The OpenAI API key.</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">        model_name str: One of the valid OpenAI embedding model names.</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">    Returns:</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">        np.ndarray: the OpenAI embeddings for the words in the wordlist.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">    Raises:</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">        ValueError: If the OpenAI key is missing, i.e., no specification of arg &#39;api_key&#39; and not environment variable OPENAI_API_KEY.</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">OPEN_AI_EMBEDDING_MODELS</span><span class="p">:</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;model_name not a valid OpenAI embedding model name. Use one of: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OPEN_AI_EMBEDDING_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>        <span class="c1"># check environment variable OPENAI_API_KEY</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>        <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OPENAI_API_KEY&#39;</span><span class="p">)</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempted OpenAI API call without API-key. Provide a valid value for &#39;api_key&#39; or set the API-key in the environment variable OPENAI_API_KEY.&quot;</span><span class="p">)</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="c1"># TODO call openai api</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="k">def</span> <span class="nf">get_embeddings</span><span class="p">(</span><span class="n">wordlist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
 </span></pre></div>
 
 
             </section>
+                <section id="get_openai_embeddings">
+                            <input id="get_openai_embeddings-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_openai_embeddings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">wordlist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>,</span><span class="param">	<span class="n">api_key</span><span class="o">=</span><span class="s1">&#39;&#39;</span>,</span><span class="param">	<span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;large&#39;</span></span><span class="return-annotation">) -> <span class="n">cupy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
+
+                <label class="view-source-button" for="get_openai_embeddings-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#get_openai_embeddings"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_openai_embeddings-43"><a href="#get_openai_embeddings-43"><span class="linenos">43</span></a><span class="k">def</span> <span class="nf">get_openai_embeddings</span><span class="p">(</span><span class="n">wordlist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">api_key</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;large&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="get_openai_embeddings-44"><a href="#get_openai_embeddings-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the GPT embeddings for a wordlist.</span>
+</span><span id="get_openai_embeddings-45"><a href="#get_openai_embeddings-45"><span class="linenos">45</span></a>
+</span><span id="get_openai_embeddings-46"><a href="#get_openai_embeddings-46"><span class="linenos">46</span></a><span class="sd">    Args:</span>
+</span><span id="get_openai_embeddings-47"><a href="#get_openai_embeddings-47"><span class="linenos">47</span></a><span class="sd">        wordlist List of str: List of words.</span>
+</span><span id="get_openai_embeddings-48"><a href="#get_openai_embeddings-48"><span class="linenos">48</span></a><span class="sd">        api_key str: The OpenAI API key.</span>
+</span><span id="get_openai_embeddings-49"><a href="#get_openai_embeddings-49"><span class="linenos">49</span></a><span class="sd">        model_name str: One of the valid OpenAI embedding model names.</span>
+</span><span id="get_openai_embeddings-50"><a href="#get_openai_embeddings-50"><span class="linenos">50</span></a>
+</span><span id="get_openai_embeddings-51"><a href="#get_openai_embeddings-51"><span class="linenos">51</span></a><span class="sd">    Returns:</span>
+</span><span id="get_openai_embeddings-52"><a href="#get_openai_embeddings-52"><span class="linenos">52</span></a><span class="sd">        np.ndarray: the OpenAI embeddings for the words in the wordlist.</span>
+</span><span id="get_openai_embeddings-53"><a href="#get_openai_embeddings-53"><span class="linenos">53</span></a>
+</span><span id="get_openai_embeddings-54"><a href="#get_openai_embeddings-54"><span class="linenos">54</span></a><span class="sd">    Raises:</span>
+</span><span id="get_openai_embeddings-55"><a href="#get_openai_embeddings-55"><span class="linenos">55</span></a><span class="sd">        ValueError: If the OpenAI key is missing, i.e., no specification of arg &#39;api_key&#39; and not environment variable OPENAI_API_KEY.</span>
+</span><span id="get_openai_embeddings-56"><a href="#get_openai_embeddings-56"><span class="linenos">56</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_openai_embeddings-57"><a href="#get_openai_embeddings-57"><span class="linenos">57</span></a>
+</span><span id="get_openai_embeddings-58"><a href="#get_openai_embeddings-58"><span class="linenos">58</span></a>    <span class="k">if</span> <span class="n">model_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">OPEN_AI_EMBEDDING_MODELS</span><span class="p">:</span>
+</span><span id="get_openai_embeddings-59"><a href="#get_openai_embeddings-59"><span class="linenos">59</span></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;model_name not a valid OpenAI embedding model name. Use one of: </span><span class="si">{</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OPEN_AI_EMBEDDING_MODELS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</span><span id="get_openai_embeddings-60"><a href="#get_openai_embeddings-60"><span class="linenos">60</span></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+</span><span id="get_openai_embeddings-61"><a href="#get_openai_embeddings-61"><span class="linenos">61</span></a>        <span class="c1"># check environment variable OPENAI_API_KEY</span>
+</span><span id="get_openai_embeddings-62"><a href="#get_openai_embeddings-62"><span class="linenos">62</span></a>        <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;OPENAI_API_KEY&#39;</span><span class="p">)</span>
+</span><span id="get_openai_embeddings-63"><a href="#get_openai_embeddings-63"><span class="linenos">63</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+</span><span id="get_openai_embeddings-64"><a href="#get_openai_embeddings-64"><span class="linenos">64</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Attempted OpenAI API call without API-key. Provide a valid value for &#39;api_key&#39; or set the API-key in the environment variable OPENAI_API_KEY.&quot;</span><span class="p">)</span>
+</span><span id="get_openai_embeddings-65"><a href="#get_openai_embeddings-65"><span class="linenos">65</span></a>    <span class="c1"># TODO call openai api</span>
+</span><span id="get_openai_embeddings-66"><a href="#get_openai_embeddings-66"><span class="linenos">66</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get the GPT embeddings for a wordlist.</p>
+
+<p>Args:
+    wordlist List of str: List of words.
+    api_key str: The OpenAI API key.
+    model_name str: One of the valid OpenAI embedding model names.</p>
+
+<p>Returns:
+    np.ndarray: the OpenAI embeddings for the words in the wordlist.</p>
+
+<p>Raises:
+    ValueError: If the OpenAI key is missing, i.e., no specification of arg 'api_key' and not environment variable OPENAI_API_KEY.</p>
+</div>
+
+
+                </section>
+                <section id="get_embeddings">
+                            <input id="get_embeddings-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_embeddings</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">wordlist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">cupy</span><span class="o">.</span><span class="n">ndarray</span>:</span></span>
+
+                <label class="view-source-button" for="get_embeddings-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#get_embeddings"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_embeddings-69"><a href="#get_embeddings-69"><span class="linenos">69</span></a><span class="k">def</span> <span class="nf">get_embeddings</span><span class="p">(</span><span class="n">wordlist</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+</span><span id="get_embeddings-70"><a href="#get_embeddings-70"><span class="linenos">70</span></a>
+</span><span id="get_embeddings-71"><a href="#get_embeddings-71"><span class="linenos">71</span></a>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+</span></pre></div>
+
+
+    
+
+                </section>
     </main>
 <script>
     function escapeHTML(html) {

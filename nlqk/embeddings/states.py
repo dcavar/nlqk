@@ -11,14 +11,18 @@ Quantum state functions and tools.
 """
 
 
-try: # prefer RAPIDS libraries and GPU over numpy and CPU
-    import cupy as np  # Try to import cupy and alias it as np
-    from cupyx.scipy.linalg import expm
-    _USE_GPU = True
-except ModuleNotFoundError:
-    import numpy as np  # If cupy not found, import numpy and alias it as np
-    from scipy.linalg import expm
-    _USE_GPU = False
+import os
+if os.getenv("GITHUB_ACTIONS") == "true":
+    import numpy as np
+else:
+    try: # prefer RAPIDS libraries and GPU over numpy and CPU
+        import cupy as np  # Try to import cupy and alias it as np
+        from cupyx.scipy.linalg import expm
+        _USE_GPU = True
+    except ModuleNotFoundError:
+        import numpy as np  # If cupy not found, import numpy and alias it as np
+        from scipy.linalg import expm
+        _USE_GPU = False
 from typing import Union, Sequence
 
 
