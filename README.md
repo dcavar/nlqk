@@ -21,7 +21,7 @@ This is an [Natural Language Processing Lab] ([NLP-Lab]) project.
 
 What is the goal of this project?
 
-The goals are to provide a library and programming environment for Natural Language Processing using a hybrid environment of classical and quantum computers. NLP tools and libraries are excellent environments for education or deployed NLP applications:
+The goals are to provide a library and programming environment for Natural Language Processing using a hybrid environment of classical and quantum computers. NLP tools and libraries are excellent environments for education and deployed business NLP applications:
 
 - [Natural Language Processing Toolkit](https://www.nltk.org/)
 - [spaCy](https://spacy.io/)

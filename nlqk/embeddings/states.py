@@ -24,7 +24,7 @@ else:
         import numpy as np  # If cupy not found, import numpy and alias it as np
         from scipy.linalg import expm
         _USE_GPU = False
-from typing import Union, Sequence
+# from typing import Union, Sequence
 
 
 def hamiltonian_to_state(H: np.ndarray) -> np.ndarray:
