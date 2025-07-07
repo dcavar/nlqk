@@ -28,7 +28,7 @@ else:
         from scipy.linalg import expm
         _USE_GPU = False
 # import GPUtil  # If you're using GPUtil
-from nlqk.embeddings.states import hamiltonian_to_state, check_states_equal
+from nlqk.embeddings.states import hamiltonian_to_state, check_states_equal, householder, state_to_hamiltonian, pad_hamiltonian
 
 
 class TestHamiltonianToState(unittest.TestCase):
@@ -524,6 +524,385 @@ class TestStatesEqual(unittest.TestCase):
         self.assertTrue(result)
 
 
+
+class TestHouseholder(unittest.TestCase):
+    """Testing the NLQK Householder reflection functionality."""
+
+    def test_householder_identical_states(self):
+        """Test householder with identical source and target states"""
+        s = np.array([1, 0], dtype=complex)
+        psi = np.array([1, 0], dtype=complex)
+        κ, R = householder(s, psi)
+        
+        # Should have phase factor κ = 1 and identity-like transformation
+        result = R @ s
+        expected = κ * psi
+        np.testing.assert_array_almost_equal(result, expected, decimal=7)
+
+    def test_householder_orthogonal_states(self):
+        """Test householder with orthogonal states"""
+        s = np.array([1, 0], dtype=complex)  # |0⟩
+        psi = np.array([0, 1], dtype=complex)  # |1⟩
+        κ, R = householder(s, psi)
+        
+        # Check that R|s⟩ = κ|ψ⟩
+        result = R @ s
+        expected = κ * psi
+        np.testing.assert_array_almost_equal(result, expected, decimal=7)
+        
+        # For orthogonal states, κ should be 1
+        self.assertAlmostEqual(κ, 1.0, places=7)
+
+    def test_householder_plus_minus_states(self):
+        """Test householder with |+⟩ and |-⟩ states"""
+        s = np.array([1/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)    # |+⟩
+        psi = np.array([1/np.sqrt(2), -1/np.sqrt(2)], dtype=complex) # |-⟩
+        κ, R = householder(s, psi)
+        
+        # Check that R|s⟩ = κ|ψ⟩
+        result = R @ s
+        expected = κ * psi
+        np.testing.assert_array_almost_equal(result, expected, decimal=7)
+
+    def test_householder_matrix_properties(self):
+        """Test that householder matrix R has correct properties"""
+        s = np.array([1, 0], dtype=complex)
+        psi = np.array([1/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)
+        κ, R = householder(s, psi)
+        
+        # R should be Hermitian
+        np.testing.assert_array_almost_equal(R, R.conj().T, decimal=7)
+        
+        # R should be unitary (R† R = I)
+        identity = R.conj().T @ R
+        expected_identity = np.eye(R.shape[0], dtype=complex)
+        np.testing.assert_array_almost_equal(identity, expected_identity, decimal=7)
+
+    def test_householder_phase_factor(self):
+        """Test that phase factor κ has unit magnitude"""
+        s = np.array([1/np.sqrt(3), 1/np.sqrt(3), 1/np.sqrt(3)], dtype=complex)
+        psi = np.array([0.5, 0.5, 1/np.sqrt(2)], dtype=complex)
+        psi = psi / np.linalg.norm(psi)  # Normalize
+        
+        κ, R = householder(s, psi)
+        
+        # κ should have unit magnitude
+        self.assertAlmostEqual(abs(κ), 1.0, places=7)
+
+    def test_householder_complex_states(self):
+        """Test householder with complex state vectors"""
+        s = np.array([1, 0], dtype=complex)
+        psi = np.array([1j/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)
+        κ, R = householder(s, psi)
+        
+        # Check transformation
+        result = R @ s
+        expected = κ * psi
+        np.testing.assert_array_almost_equal(result, expected, decimal=7)
+
+    def test_householder_multiqubit_states(self):
+        """Test householder with multi-qubit states"""
+        # 2-qubit states
+        s = np.array([1, 0, 0, 0], dtype=complex)  # |00⟩
+        psi = np.array([0, 0, 0, 1], dtype=complex)  # |11⟩
+        κ, R = householder(s, psi)
+        
+        # Check transformation
+        result = R @ s
+        expected = κ * psi
+        np.testing.assert_array_almost_equal(result, expected, decimal=7)
+        
+        # Check matrix properties
+        np.testing.assert_array_almost_equal(R, R.conj().T, decimal=7)  # Hermitian
+        identity = R.conj().T @ R
+        expected_identity = np.eye(4, dtype=complex)
+        np.testing.assert_array_almost_equal(identity, expected_identity, decimal=7)  # Unitary
+
+
+class TestStateToHamiltonian(unittest.TestCase):
+    """Testing the NLQK state-to-Hamiltonian conversion functionality."""
+
+    def test_state_to_hamiltonian_uniform_superposition(self):
+        """Test with uniform superposition (should give zero Hamiltonian)"""
+        psi = np.array([1/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)  # |+⟩
+        H = state_to_hamiltonian(psi)
+        
+        # Should be approximately zero matrix
+        expected = np.zeros((2, 2), dtype=complex)
+        np.testing.assert_array_almost_equal(H, expected, decimal=6)
+
+    def test_state_to_hamiltonian_basic_state(self):
+        """Test with |0⟩ state"""
+        psi = np.array([1, 0], dtype=complex)  # |0⟩
+        H = state_to_hamiltonian(psi)
+        
+        # Check that exp(-iH) applied to uniform superposition gives |0⟩
+        s = np.array([1/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)  # uniform superposition
+        U = expm(-1j * H)
+        result = U @ s
+        
+        # Result should be proportional to psi
+        self.assertTrue(check_states_equal(result, psi, tol=1e-6))
+
+    def test_state_to_hamiltonian_basis_state(self):
+        """Test with |1⟩ state"""
+        psi = np.array([0, 1], dtype=complex)  # |1⟩
+        H = state_to_hamiltonian(psi)
+        
+        # Check that exp(-iH) applied to uniform superposition gives |1⟩
+        s = np.array([1/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)
+        U = expm(-1j * H)
+        result = U @ s
+        
+        self.assertTrue(check_states_equal(result, psi, tol=1e-6))
+
+    def test_state_to_hamiltonian_hermitian_property(self):
+        """Test that returned Hamiltonian is Hermitian"""
+        psi = np.array([0.6, 0.8], dtype=complex)
+        H = state_to_hamiltonian(psi)
+        
+        # H should be Hermitian
+        np.testing.assert_array_almost_equal(H, H.conj().T, decimal=7)
+
+    def test_state_to_hamiltonian_complex_state(self):
+        """Test with complex target state"""
+        psi = np.array([1j/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)
+        H = state_to_hamiltonian(psi)
+        
+        # Check Hermiticity
+        np.testing.assert_array_almost_equal(H, H.conj().T, decimal=7)
+        
+        # Check evolution
+        s = np.array([1/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)
+        U = expm(-1j * H)
+        result = U @ s
+        self.assertTrue(check_states_equal(result, psi, tol=1e-6))
+
+    def test_state_to_hamiltonian_multiqubit(self):
+        """Test with multi-qubit target states"""
+        # 2-qubit Bell state |Φ+⟩ = (|00⟩ + |11⟩)/√2
+        psi = np.array([1/np.sqrt(2), 0, 0, 1/np.sqrt(2)], dtype=complex)
+        H = state_to_hamiltonian(psi)
+        
+        # Check Hermiticity
+        np.testing.assert_array_almost_equal(H, H.conj().T, decimal=7)
+        
+        # Check evolution from uniform superposition
+        s = np.ones(4, dtype=complex) / 2.0  # uniform 2-qubit superposition
+        U = expm(-1j * H)
+        result = U @ s
+        self.assertTrue(check_states_equal(result, psi, tol=1e-6))
+
+    def test_state_to_hamiltonian_normalization(self):
+        """Test that function handles non-normalized input correctly"""
+        psi_unnormalized = np.array([3, 4], dtype=complex)  # |3,4⟩
+        H = state_to_hamiltonian(psi_unnormalized)
+        
+        # Should work the same as normalized version
+        psi_normalized = psi_unnormalized / np.linalg.norm(psi_unnormalized)
+        H_normalized = state_to_hamiltonian(psi_normalized)
+        
+        np.testing.assert_array_almost_equal(H, H_normalized, decimal=7)
+
+    def test_state_to_hamiltonian_roundtrip(self):
+        """Test roundtrip: state → Hamiltonian → evolved state"""
+        original_psi = np.array([0.3, 0.4, 0.5, 0.7], dtype=complex)
+        original_psi = original_psi / np.linalg.norm(original_psi)
+        
+        # Convert to Hamiltonian
+        H = state_to_hamiltonian(original_psi)
+        
+        # Evolve uniform superposition
+        s = np.ones(4, dtype=complex) / 2.0
+        U = expm(-1j * H)
+        evolved_psi = U @ s
+        
+        # Should get back the original state (up to global phase)
+        self.assertTrue(check_states_equal(evolved_psi, original_psi, tol=1e-6))
+
+    def test_state_to_hamiltonian_zero_case(self):
+        """Test edge case with uniform superposition input"""
+        # For 3-qubit uniform superposition
+        psi = np.ones(8, dtype=complex) / np.sqrt(8)
+        H = state_to_hamiltonian(psi)
+        
+        # Should be approximately zero
+        expected = np.zeros((8, 8), dtype=complex)
+        np.testing.assert_array_almost_equal(H, expected, decimal=6)
+
+    def test_state_to_hamiltonian_return_type(self):
+        """Test that function returns correct matrix type"""
+        psi = np.array([0.6, 0.8], dtype=complex)
+        H = state_to_hamiltonian(psi)
+        
+        # Check return type and properties
+        self.assertIsInstance(H, np.ndarray)
+        self.assertEqual(H.ndim, 2)
+        self.assertEqual(H.shape[0], H.shape[1])  # Square matrix
+        self.assertTrue(np.iscomplexobj(H))
+
+
+class TestPadHamiltonian(unittest.TestCase):
+    """Testing the NLQK Hamiltonian padding functionality."""
+
+    def test_pad_hamiltonian_already_power_of_2(self):
+        """Test that matrices that are already power-of-2 size are unchanged"""
+        # 2x2 matrix (already power of 2)
+        H_2x2 = np.array([[1, 0.5], [0.5, -1]], dtype=complex)
+        result = pad_hamiltonian(H_2x2)
+        np.testing.assert_array_equal(result, H_2x2)
+        
+        # 4x4 matrix (already power of 2)
+        H_4x4 = np.random.randn(4, 4) + 1j * np.random.randn(4, 4)
+        H_4x4 = (H_4x4 + H_4x4.conj().T) / 2  # Make Hermitian
+        result = pad_hamiltonian(H_4x4)
+        np.testing.assert_array_equal(result, H_4x4)
+
+    def test_pad_hamiltonian_3x3_to_4x4(self):
+        """Test padding 3x3 matrix to 4x4"""
+        H_3x3 = np.array([
+            [1, 0.5, 0.2],
+            [0.5, -1, 0.3],
+            [0.2, 0.3, 0.5]
+        ], dtype=complex)
+        
+        result = pad_hamiltonian(H_3x3)
+        
+        # Check dimensions
+        self.assertEqual(result.shape, (4, 4))
+        
+        # Check that original 3x3 block is preserved
+        np.testing.assert_array_equal(result[:3, :3], H_3x3)
+        
+        # Check that padding is zeros
+        np.testing.assert_array_equal(result[3, :], [0, 0, 0, 0])
+        np.testing.assert_array_equal(result[:, 3], [0, 0, 0, 0])
+
+    def test_pad_hamiltonian_5x5_to_8x8(self):
+        """Test padding 5x5 matrix to 8x8"""
+        H_5x5 = np.random.randn(5, 5) + 1j * np.random.randn(5, 5)
+        H_5x5 = (H_5x5 + H_5x5.conj().T) / 2  # Make Hermitian
+        
+        result = pad_hamiltonian(H_5x5)
+        
+        # Check dimensions
+        self.assertEqual(result.shape, (8, 8))
+        
+        # Check that original 5x5 block is preserved
+        np.testing.assert_array_almost_equal(result[:5, :5], H_5x5)
+        
+        # Check that padding rows and columns are zeros
+        np.testing.assert_array_equal(result[5:, :], np.zeros((3, 8)))
+        np.testing.assert_array_equal(result[:, 5:], np.zeros((8, 3)))
+
+    def test_pad_hamiltonian_preserves_hermiticity(self):
+        """Test that padding preserves Hermitian property"""
+        # Create a Hermitian 3x3 matrix
+        A = np.random.randn(3, 3) + 1j * np.random.randn(3, 3)
+        H_3x3 = (A + A.conj().T) / 2
+        
+        result = pad_hamiltonian(H_3x3)
+        
+        # Check that result is Hermitian
+        np.testing.assert_array_almost_equal(result, result.conj().T)
+
+    def test_pad_hamiltonian_preserves_dtype(self):
+        """Test that padding preserves data type"""
+        # Complex matrix
+        H_complex = np.array([[1+1j, 0.5], [0.5, -1+0.5j]], dtype=complex)
+        result_complex = pad_hamiltonian(H_complex)
+        self.assertEqual(result_complex.dtype, complex)
+        
+        # Real matrix
+        H_real = np.array([[1, 0.5, 0.2], [0.5, -1, 0.3], [0.2, 0.3, 0.5]], dtype=float)
+        result_real = pad_hamiltonian(H_real)
+        self.assertEqual(result_real.dtype, float)
+
+    def test_pad_hamiltonian_evolution_equivalence(self):
+        """Test that evolution in original vs padded space gives equivalent results"""
+        # Create a 3x3 Hermitian matrix
+        H_3x3 = np.array([
+            [1, 0.5, 0.2],
+            [0.5, -1, 0.3],
+            [0.2, 0.3, 0.5]
+        ], dtype=complex)
+        
+        # Pad to 4x4
+        H_4x4 = pad_hamiltonian(H_3x3)
+        
+        # Create initial states
+        psi_3 = np.array([1, 0, 0], dtype=complex)  # |000⟩ in 3D
+        psi_4 = np.array([1, 0, 0, 0], dtype=complex)  # |000⟩ in 4D
+        
+        # Evolve both
+        t = 0.5
+        U_3 = expm(-1j * t * H_3x3)
+        U_4 = expm(-1j * t * H_4x4)
+        
+        evolved_3 = U_3 @ psi_3
+        evolved_4 = U_4 @ psi_4
+        
+        # First 3 components should be identical
+        np.testing.assert_array_almost_equal(evolved_3, evolved_4[:3])
+        
+        # 4th component should remain zero
+        self.assertAlmostEqual(evolved_4[3], 0.0)
+
+    def test_pad_hamiltonian_single_element(self):
+        """Test padding 1x1 matrix to 2x2"""
+        H_1x1 = np.array([[2.5]], dtype=complex)
+        result = pad_hamiltonian(H_1x1)
+        
+        expected = np.array([[2.5, 0], [0, 0]], dtype=complex)
+        np.testing.assert_array_equal(result, expected)
+
+    def test_pad_hamiltonian_large_matrix(self):
+        """Test padding larger matrices"""
+        # 7x7 should pad to 8x8
+        H_7x7 = np.random.randn(7, 7) + 1j * np.random.randn(7, 7)
+        H_7x7 = (H_7x7 + H_7x7.conj().T) / 2
+        
+        result = pad_hamiltonian(H_7x7)
+        
+        self.assertEqual(result.shape, (8, 8))
+        np.testing.assert_array_almost_equal(result[:7, :7], H_7x7)
+
+    def test_pad_hamiltonian_power_calculation(self):
+        """Test that the power-of-2 calculation is correct for various sizes"""
+        test_cases = [
+            (1, 2),   # 1 -> 2
+            (2, 2),   # 2 -> 2 (no change)
+            (3, 4),   # 3 -> 4
+            (4, 4),   # 4 -> 4 (no change)
+            (5, 8),   # 5 -> 8
+            (8, 8),   # 8 -> 8 (no change)
+            (9, 16),  # 9 -> 16
+            (15, 16), # 15 -> 16
+            (16, 16), # 16 -> 16 (no change)
+        ]
+        
+        for input_size, expected_size in test_cases:
+            with self.subTest(input_size=input_size):
+                H = np.random.randn(input_size, input_size)
+                result = pad_hamiltonian(H)
+                self.assertEqual(result.shape, (expected_size, expected_size))
+
+    def test_pad_hamiltonian_zero_matrix(self):
+        """Test padding zero matrices"""
+        H_zero = np.zeros((3, 3), dtype=complex)
+        result = pad_hamiltonian(H_zero)
+        
+        expected = np.zeros((4, 4), dtype=complex)
+        np.testing.assert_array_equal(result, expected)
+
+    def test_pad_hamiltonian_return_type(self):
+        """Test that function returns correct array type"""
+        H_3x3 = np.array([[1, 0.5, 0.2], [0.5, -1, 0.3], [0.2, 0.3, 0.5]])
+        result = pad_hamiltonian(H_3x3)
+        
+        self.assertIsInstance(result, np.ndarray)
+        self.assertEqual(result.ndim, 2)
+        self.assertEqual(result.shape[0], result.shape[1])  # Square matrix
 
 if __name__ == '__main__':
     unittest.main()
