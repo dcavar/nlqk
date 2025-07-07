@@ -9,7 +9,7 @@ This is an [Natural Language Processing Lab] ([NLP-Lab]) project.
 
 ## Contributors
 
-- [Dr. Damir Cavar]
+- [Dr. Damir Cavar] (main author, maintainer, project lead)
 - [Billy Dickson]
 - [James Bryan Graves]
 - [Koushik Reddy Parukola]

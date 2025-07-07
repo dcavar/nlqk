@@ -6,6 +6,7 @@ authors = [
   { name="Koushik Reddy Parukola", email="koparu@iu.edu"},
   { name="Shane A. Sparks", email="sparksashane@gmail.com"},
   { name="James B. Graves", email="gravjabr@iu.edu"},
+  { name="Billy G. Dickson", email="dicksonb@iu.edu"},
 ]
 requires-python = ">=3.9"
 classifiers = [
@@ -15,6 +16,10 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.19.0",
+	  "pandas>=1.3.0",
+	  "scipy>=1.7.0",
+	  "requests>=2.25.0",
+	  "cupy-cuda12x>=13.4.1",
 ]
 [project.urls]
 Homepage = "https://nlqk.ai/"
