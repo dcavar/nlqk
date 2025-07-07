@@ -38,7 +38,7 @@ class TestHamiltonianToState(unittest.TestCase):
         """Test that zero Hamiltonian gives |0⟩ state"""
         # 1-qubit case: H = 0 matrix should give |0⟩ = [1, 0]
         H = np.zeros((2, 2), dtype=complex)
-        result = hamiltonian_to_state(H)
+        result = hamiltonian_to_state(H, init_state="zero")
         expected = np.array([1.0, 0.0], dtype=complex)
         np.testing.assert_array_almost_equal(result, expected, decimal=7)
 
@@ -47,7 +47,7 @@ class TestHamiltonianToState(unittest.TestCase):
         # H = π/2 * σ_x gives U = exp(i*π/2*σ_x) = cos(π/2)*I + i*sin(π/2)*σ_x = i*σ_x
         # U|0⟩ = i*σ_x|0⟩ = i*|1⟩ = [0, i]
         H = (np.pi / 2) * np.array([[0, 1], [1, 0]], dtype=complex)
-        result = hamiltonian_to_state(H)
+        result = hamiltonian_to_state(H, init_state="zero", forward=False)
         expected = np.array([0.0, 1j], dtype=complex)
         np.testing.assert_array_almost_equal(result, expected, decimal=6)
 
@@ -56,7 +56,7 @@ class TestHamiltonianToState(unittest.TestCase):
         # H = π/2 * σ_y gives U = exp(i*π/2*σ_y) = cos(π/2)*I + i*sin(π/2)*σ_y = i*σ_y
         # U|0⟩ = i*σ_y|0⟩ = i*i*|1⟩ = -|1⟩ = [0, -1]
         H = (np.pi / 2) * np.array([[0, -1j], [1j, 0]], dtype=complex)
-        result = hamiltonian_to_state(H)
+        result = hamiltonian_to_state(H, init_state="zero", forward=False)
         expected = np.array([0.0, -1.0], dtype=complex)
         np.testing.assert_array_almost_equal(result, expected, decimal=6)
 
@@ -65,7 +65,7 @@ class TestHamiltonianToState(unittest.TestCase):
         # For H = π/4 * σ_x, we get a rotation that creates superposition
         # This should give approximately equal amplitudes
         H = (np.pi / 4) * np.array([[0, 1], [1, 0]], dtype=complex)
-        result = hamiltonian_to_state(H)
+        result = hamiltonian_to_state(H, init_state="zero")
         
         # Check normalization
         #self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
@@ -102,7 +102,7 @@ class TestHamiltonianToState(unittest.TestCase):
     def test_hamiltonian_to_state_two_qubit_zero(self):
         """Test two-qubit zero Hamiltonian gives |00⟩ state"""
         H = np.zeros((4, 4), dtype=complex)
-        result = hamiltonian_to_state(H)
+        result = hamiltonian_to_state(H, init_state="zero")
         expected = np.array([1.0, 0.0, 0.0, 0.0], dtype=complex)
         np.testing.assert_array_almost_equal(result, expected, decimal=7)
 
@@ -165,7 +165,7 @@ class TestHamiltonianToState(unittest.TestCase):
         """Test that the function implements unitary evolution correctly"""
         # Create a simple Hamiltonian
         H = np.array([[1, 0.5], [0.5, -1]], dtype=complex)
-        result = hamiltonian_to_state(H)
+        result = hamiltonian_to_state(H, init_state="zero", forward=False)
         
         # Manually compute U = exp(iH) and apply to |0⟩
         U = expm(1j * H)
@@ -233,7 +233,7 @@ class TestHamiltonianToState(unittest.TestCase):
     def test_hamiltonian_to_state_return_type(self):
         """Test that function returns correct type"""
         H = np.zeros((2, 2), dtype=complex)
-        result = hamiltonian_to_state(H)
+        result = hamiltonian_to_state(H, init_state="zero")
         
         # Check return type
         self.assertIsInstance(result, np.ndarray)
@@ -256,11 +256,29 @@ class TestHamiltonianToState(unittest.TestCase):
     def test_hamiltonian_to_state_inverse_relationship(self):
         """Test relationship with check_states_equal function"""
         H = np.array([[0.1, 0.2], [0.2, -0.1]], dtype=complex)
-        result1 = hamiltonian_to_state(H)
-        result2 = hamiltonian_to_state(H)
+        result1 = hamiltonian_to_state(H, init_state="zero")
+        result2 = hamiltonian_to_state(H, init_state="zero")
         
         # Same Hamiltonian should give identical states
         self.assertTrue(check_states_equal(result1, result2, tol=1e-10))
+
+    def test_hamiltonian_to_state_superposition_init(self):
+        """Test that function works with superposition initial state"""
+        # Zero Hamiltonian with superposition initial state should give equal superposition
+        H = np.zeros((4, 4), dtype=complex)
+        result = hamiltonian_to_state(H, init_state="superposition")
+        expected = np.array([0.5, 0.5, 0.5, 0.5], dtype=complex)
+        np.testing.assert_array_almost_equal(result, expected, decimal=7)
+
+    def test_hamiltonian_to_state_different_init_states(self):
+        """Test that different initial states give different results"""
+        H = np.array([[0.1, 0.2], [0.2, -0.1]], dtype=complex)
+        
+        result_zero = hamiltonian_to_state(H, init_state="zero")
+        result_super = hamiltonian_to_state(H, init_state="superposition")
+        
+        # Results should be different (not equal up to global phase)
+        self.assertFalse(check_states_equal(result_zero, result_super, tol=1e-6))
 
 
 class TestStatesEqual(unittest.TestCase):

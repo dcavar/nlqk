@@ -24,35 +24,46 @@ else:
         import numpy as np  # If cupy not found, import numpy and alias it as np
         from scipy.linalg import expm
         _USE_GPU = False
-# from typing import Union, Sequence
 
-
-def hamiltonian_to_state(H: np.ndarray) -> np.ndarray:
+def hamiltonian_to_state(H: np.ndarray,
+                         t: float = 1.0,
+                         init_state: str = "zero",
+                         forward: bool = True) -> np.ndarray:
     """
-    Reconstructs a quantum state |ψ⟩ = e^{iH} |0⟩ from the given Hamiltonian H.
+    Evolve an initial state under a Hermitian Hamiltonian H for time t.
 
     Args:
-        H np.ndarray: 
-            Hamiltonian matrix (must be square with dimension 2^n for some integer n).
+        H (np.ndarray): Hermitian d×d matrix. d must be a power of 2.
+        t (float): Evolution time in units where ħ = 1.
+        init_state (str): "superposition" or "zero".
+        forward (bool): If True, use e^{-iHt}; else e^{+iHt}.
 
     Returns:
-        np.ndarray: Complex quantum state vector |ψ⟩ obtained by applying e^{iH} to |0⟩.
-
-    Raises:
-        ValueError: If H is not a square matrix or dimension is not a power of 2.
+        np.ndarray: The evolved state vector.
     """
-    n_qubits = int(np.log2(H.shape[0]))
-    dim = 2 ** n_qubits
+    # structural checks
+    if H.shape[0] != H.shape[1]:
+        raise ValueError("H must be square")
+    if not np.allclose(H, H.conj().T):
+        raise ValueError("H must be Hermitian")
+    dim = H.shape[0]
+    if 2 ** int(np.log2(dim)) != dim:
+        raise ValueError("Dimension must be a power of two")
 
-    zero_state = np.zeros(dim, dtype=complex)
-    zero_state[0] = 1.0
+    # choose the initial ket
+    if init_state == "zero":
+        psi0 = np.zeros(dim, dtype=complex)
+        psi0[0] = 1.0
+    elif init_state == "superposition":
+        psi0 = np.ones(dim, dtype=complex) / np.sqrt(dim)
+    else:
+        raise ValueError("init_state must be 'zero' or 'superposition'")
 
-    U = expm(1j * H)
+    # unitary time evolution
+    sign = -1j if forward else 1j
+    U = expm(sign * t * H)
 
-    psi = U @ zero_state
-
-    return psi
-
+    return U @ psi0
 
 def check_states_equal(psi1: np.ndarray, psi2: np.ndarray, tol: float = 1e-6) -> bool:
     """
