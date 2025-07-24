@@ -17,18 +17,22 @@ import os
 import unittest
 if os.getenv("GITHUB_ACTIONS") == "true":
     import numpy as np
-    from scipy.linalg import expm
+    from scipy.linalg import expm, sqrtm
 else:
     try: # prefer RAPIDS libraries and GPU over numpy and CPU
         import cupy as np  # Try to import cupy and alias it as np
         from cupyx.scipy.linalg import expm
+        try:
+            from cupyx.scipy.linalg import sqrtm
+        except ImportError:
+            from scipy.linalg import sqrtm
         _USE_GPU = True
     except ModuleNotFoundError:
         import numpy as np  # If cupy not found, import numpy and alias it as np
-        from scipy.linalg import expm
+        from scipy.linalg import expm, sqrtm
         _USE_GPU = False
 # import GPUtil  # If you're using GPUtil
-from nlqk.embeddings.states import hamiltonian_to_state, check_states_equal, householder, state_to_hamiltonian, pad_hamiltonian
+from nlqk.embeddings.states import hamiltonian_to_state, check_states_equal, householder, state_to_hamiltonian, pad_hamiltonian, tomography, trace, PAULIS, PAULI_LABELS, pad_state
 
 
 class TestHamiltonianToState(unittest.TestCase):
@@ -75,29 +79,29 @@ class TestHamiltonianToState(unittest.TestCase):
         self.assertGreater(abs(result[0]), 0.3)
         self.assertGreater(abs(result[1]), 0.3)
 
-    #def test_hamiltonian_to_state_plus_state(self):
-    #    """Test creating the |+⟩ state using correct Hamiltonian"""
-    #    # H = π/2 * (σ_x + σ_z)/√2 creates Hadamard-like transformation
-    #    sigma_x = np.array([[0, 1], [1, 0]], dtype=complex)
-    #    sigma_z = np.array([[1, 0], [0, -1]], dtype=complex)
-    #    H = (np.pi / (2 * np.sqrt(2))) * (sigma_x + sigma_z)
-    #    
-    #    result = hamiltonian_to_state(H)
-    ##    
-    #    # Check normalization
-    #    self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
-    #    
-    #    # Should create some superposition
-    #    self.assertGreater(abs(result[0]), 0.1)
-    #    self.assertGreater(abs(result[1]), 0.1)
+    def test_hamiltonian_to_state_plus_state(self):
+       """Test creating the |+⟩ state using correct Hamiltonian"""
+       # H = π/2 * (σ_x + σ_z)/√2 creates Hadamard-like transformation
+       sigma_x = np.array([[0, 1], [1, 0]], dtype=complex)
+       sigma_z = np.array([[1, 0], [0, -1]], dtype=complex)
+       H = (np.pi / (2 * np.sqrt(2))) * (sigma_x + sigma_z)
+       
+       result = hamiltonian_to_state(H)
+        
+       # Check normalization
+       self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
+       
+       # Should create some superposition
+       self.assertGreater(abs(result[0]), 0.1)
+       self.assertGreater(abs(result[1]), 0.1)
 
-    #def test_hamiltonian_to_state_pauli_z(self):
-    #    """Test Hamiltonian corresponding to Pauli-Z rotation"""
-    #    # H = π * σ_z should give -|0⟩ = [-1, 0]
-    #    H = np.pi * np.array([[1, 0], [0, -1]], dtype=complex)
-    #    result = hamiltonian_to_state(H)
-    #    expected = np.array([-1.0, 0.0], dtype=complex)
-    #    np.testing.assert_array_almost_equal(result, expected, decimal=6)
+    def test_hamiltonian_to_state_pauli_z(self):
+       """Test Hamiltonian corresponding to Pauli-Z rotation"""
+       # H = π * σ_z should give -|0⟩ = [-1, 0]
+       H = np.pi * np.array([[1, 0], [0, -1]], dtype=complex)
+       result = hamiltonian_to_state(H)
+       expected = np.array([-1.0, 0.0], dtype=complex)
+       np.testing.assert_array_almost_equal(result, expected, decimal=6)
 
     def test_hamiltonian_to_state_two_qubit_zero(self):
         """Test two-qubit zero Hamiltonian gives |00⟩ state"""
@@ -106,60 +110,60 @@ class TestHamiltonianToState(unittest.TestCase):
         expected = np.array([1.0, 0.0, 0.0, 0.0], dtype=complex)
         np.testing.assert_array_almost_equal(result, expected, decimal=7)
 
-    #def test_hamiltonian_to_state_two_qubit_hadamard_like(self):
-    #    """Test two-qubit Hamiltonian that creates superposition"""
-    #    # Simple 2-qubit Hamiltonian that creates equal superposition
-    #    H = (np.pi / 4) * np.array([
-    #        [0, 1, 1, 0],
-    #        [1, 0, 0, 1],
-    #        [1, 0, 0, 1],
-    #        [0, 1, 1, 0]
-    #    ], dtype=complex)
-    #    result = hamiltonian_to_state(H)
-    #    
-    #    # Check that the result is normalized
-    #    self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
-    #    
-    #    # Check that it's not just |00⟩
-    #    self.assertGreater(abs(result[1]), 0.1)
+    def test_hamiltonian_to_state_two_qubit_hadamard_like(self):
+       """Test two-qubit Hamiltonian that creates superposition"""
+       # Simple 2-qubit Hamiltonian that creates equal superposition
+       H = (np.pi / 4) * np.array([
+           [0, 1, 1, 0],
+           [1, 0, 0, 1],
+           [1, 0, 0, 1],
+           [0, 1, 1, 0]
+       ], dtype=complex)
+       result = hamiltonian_to_state(H)
+       
+       # Check that the result is normalized
+       self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
+       
+       # Check that it's not just |00⟩
+       self.assertGreater(abs(result[1]), 0.1)
 
-    #def test_hamiltonian_to_state_hermitian_property(self):
-    #    """Test that function works with Hermitian Hamiltonians"""
-    #    # Create a random Hermitian matrix
-    #    np.random.seed(42)
-    #    A = np.random.randn(2, 2) + 1j * np.random.randn(2, 2)
-    #    H = (A + A.conj().T) / 2  # Make it Hermitian
-    #    
-    #    result = hamiltonian_to_state(H)
-    #    
-    #    # Check normalization
-    #    self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
-    #    
-    #    # Check that result is a valid 2-element state vector
-    #    self.assertEqual(len(result), 2)
+    def test_hamiltonian_to_state_hermitian_property(self):
+       """Test that function works with Hermitian Hamiltonians"""
+       # Create a random Hermitian matrix
+       np.random.seed(42)
+       A = np.random.randn(2, 2) + 1j * np.random.randn(2, 2)
+       H = (A + A.conj().T) / 2  # Make it Hermitian
+       
+       result = hamiltonian_to_state(H)
+       
+       # Check normalization
+       self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
+       
+       # Check that result is a valid 2-element state vector
+       self.assertEqual(len(result), 2)
 
-    #def test_hamiltonian_to_state_three_qubit(self):
-    #    """Test three-qubit zero Hamiltonian gives |000⟩ state"""
-    #    H = np.zeros((8, 8), dtype=complex)
-    #    result = hamiltonian_to_state(H)
-    #    expected = np.zeros(8, dtype=complex)
-    #    expected[0] = 1.0
-    #    np.testing.assert_array_almost_equal(result, expected, decimal=7)
+    def test_hamiltonian_to_state_three_qubit(self):
+       """Test three-qubit zero Hamiltonian gives |000⟩ state"""
+       H = np.zeros((8, 8), dtype=complex)
+       result = hamiltonian_to_state(H)
+       expected = np.zeros(8, dtype=complex)
+       expected[0] = 1.0
+       np.testing.assert_array_almost_equal(result, expected, decimal=7)
 
-    #def test_hamiltonian_to_state_normalization(self):
-    #    """Test that output state is always normalized"""
-    #    test_cases = [
-    #        np.zeros((2, 2)),  # 1-qubit
-    #        np.zeros((4, 4)),  # 2-qubit
-    #        np.eye(2) * 0.5,   # Small non-zero Hamiltonian
-    #        np.array([[1, 2], [2, 1]]) * 0.1  # Another small Hamiltonian
-    #    ]
-    #    
-    #    for H in test_cases:
-    #        with self.subTest(H_shape=H.shape):
-    #            result = hamiltonian_to_state(H)
-    #            norm = np.linalg.norm(result)
-    #            self.assertAlmostEqual(norm, 1.0, places=7)
+    def test_hamiltonian_to_state_normalization(self):
+       """Test that output state is always normalized"""
+       test_cases = [
+           np.zeros((2, 2)),  # 1-qubit
+           np.zeros((4, 4)),  # 2-qubit
+           np.eye(2) * 0.5,   # Small non-zero Hamiltonian
+           np.array([[1, 2], [2, 1]]) * 0.1  # Another small Hamiltonian
+       ]
+       
+       for H in test_cases:
+           with self.subTest(H_shape=H.shape):
+               result = hamiltonian_to_state(H)
+               norm = np.linalg.norm(result)
+               self.assertAlmostEqual(norm, 1.0, places=7)
 
     def test_hamiltonian_to_state_unitary_evolution(self):
         """Test that the function implements unitary evolution correctly"""
@@ -174,61 +178,61 @@ class TestHamiltonianToState(unittest.TestCase):
         
         np.testing.assert_array_almost_equal(result, expected, decimal=7)
 
-    #def test_hamiltonian_to_state_complex_hamiltonian(self):
-    #    """Test with complex Hamiltonian entries"""
-    #    H = np.array([
-    #        [0, 1-1j],
-    #        [1+1j, 0]
-    #    ], dtype=complex)
-    #    
-    #    result = hamiltonian_to_state(H)
-    #    
-    #    # Check normalization
-    #    self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
-    #    
-    #    # Check that result has complex entries
-    #    self.assertTrue(np.iscomplexobj(result))
+    def test_hamiltonian_to_state_complex_hamiltonian(self):
+       """Test with complex Hamiltonian entries"""
+       H = np.array([
+           [0, 1-1j],
+           [1+1j, 0]
+       ], dtype=complex)
+       
+       result = hamiltonian_to_state(H)
+       
+       # Check normalization
+       self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
+       
+       # Check that result has complex entries
+       self.assertTrue(np.iscomplexobj(result))
 
-    #def test_hamiltonian_to_state_large_hamiltonian(self):
-    #    """Test with larger Hamiltonian matrix"""
-    #    # 4-qubit system (16x16 matrix)
-    #    H = np.zeros((16, 16), dtype=complex)
-    #    # Add some small random Hermitian perturbation
-    #    np.random.seed(123)
-    #    A = np.random.randn(16, 16) + 1j * np.random.randn(16, 16)
-    #    H = (A + A.conj().T) / 2 * 0.01  # Small Hermitian matrix
-    #    
-    #    result = hamiltonian_to_state(H)
-    #    
-    #    # Check properties
-    #    self.assertEqual(len(result), 16)
-    #    self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=6)
-    #    self.assertAlmostEqual(abs(result[0]), 1.0, places=2)  # Should be close to |0000⟩
+    def test_hamiltonian_to_state_large_hamiltonian(self):
+       """Test with larger Hamiltonian matrix"""
+       # 4-qubit system (16x16 matrix)
+       H = np.zeros((16, 16), dtype=complex)
+       # Add some small random Hermitian perturbation
+       np.random.seed(123)
+       A = np.random.randn(16, 16) + 1j * np.random.randn(16, 16)
+       H = (A + A.conj().T) / 2 * 0.01  # Small Hermitian matrix
+       
+       result = hamiltonian_to_state(H)
+       
+       # Check properties
+       self.assertEqual(len(result), 16)
+       self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=6)
+       self.assertAlmostEqual(abs(result[0]), 1.0, places=2)  # Should be close to |0000⟩
 
-    #def test_hamiltonian_to_state_power_of_two_dimensions(self):
-    #    """Test that function works only with power-of-2 dimensions"""
-    #    # Valid dimensions (powers of 2)
-    #    valid_dims = [2, 4, 8, 16]
-    #    for dim in valid_dims:
-    #        with self.subTest(dim=dim):
-    #            H = np.zeros((dim, dim), dtype=complex)
-    #            result = hamiltonian_to_state(H)
-    #            self.assertEqual(len(result), dim)
-    #            self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
+    def test_hamiltonian_to_state_power_of_two_dimensions(self):
+       """Test that function works only with power-of-2 dimensions"""
+       # Valid dimensions (powers of 2)
+       valid_dims = [2, 4, 8, 16]
+       for dim in valid_dims:
+           with self.subTest(dim=dim):
+               H = np.zeros((dim, dim), dtype=complex)
+               result = hamiltonian_to_state(H)
+               self.assertEqual(len(result), dim)
+               self.assertAlmostEqual(np.linalg.norm(result), 1.0, places=7)
 
-    #def test_hamiltonian_to_state_small_rotation(self):
-    #    """Test small rotation Hamiltonians"""
-    #    # Small rotation around X axis
-    #    theta = 0.1
-    #    H = theta * np.array([[0, 1], [1, 0]], dtype=complex)
-    #    result = hamiltonian_to_state(H)
-    #    
-    #    # For small θ, |ψ⟩ ≈ |0⟩ + iθ|1⟩
-    #    expected_approx = np.array([1.0, 1j * theta], dtype=complex)
-    #    expected_approx = expected_approx / np.linalg.norm(expected_approx)
-    #    
-    #    # Should be close for small theta
-    #    self.assertAlmostEqual(abs(result[0]), abs(expected_approx[0]), places=2)
+    def test_hamiltonian_to_state_small_rotation(self):
+       """Test small rotation Hamiltonians"""
+       # Small rotation around X axis
+       theta = 0.1
+       H = theta * np.array([[0, 1], [1, 0]], dtype=complex)
+       result = hamiltonian_to_state(H)
+       
+       # For small θ, |ψ⟩ ≈ |0⟩ + iθ|1⟩
+       expected_approx = np.array([1.0, 1j * theta], dtype=complex)
+       expected_approx = expected_approx / np.linalg.norm(expected_approx)
+       
+       # Should be close for small theta
+       self.assertAlmostEqual(abs(result[0]), abs(expected_approx[0]), places=2)
 
     def test_hamiltonian_to_state_return_type(self):
         """Test that function returns correct type"""
@@ -240,18 +244,18 @@ class TestHamiltonianToState(unittest.TestCase):
         self.assertTrue(np.iscomplexobj(result))
         self.assertEqual(result.dtype, complex)
 
-    #def test_hamiltonian_to_state_zero_state_property(self):
-    #    """Test that |0⟩ is always the first basis state"""
-    #    for n_qubits in [1, 2, 3]:
-    #        dim = 2 ** n_qubits
-    #        H = np.zeros((dim, dim), dtype=complex)
-    #        result = hamiltonian_to_state(H)
-    #        
-    #        # |0⟩ state should have amplitude 1 in first component, 0 elsewhere
-    #        expected = np.zeros(dim, dtype=complex)
-    #        expected[0] = 1.0
-    #        
-    #        np.testing.assert_array_almost_equal(result, expected, decimal=7)
+    def test_hamiltonian_to_state_zero_state_property(self):
+       """Test that |0⟩ is always the first basis state"""
+       for n_qubits in [1, 2, 3]:
+           dim = 2 ** n_qubits
+           H = np.zeros((dim, dim), dtype=complex)
+           result = hamiltonian_to_state(H)
+           
+           # |0⟩ state should have amplitude 1 in first component, 0 elsewhere
+           expected = np.zeros(dim, dtype=complex)
+           expected[0] = 1.0
+           
+           np.testing.assert_array_almost_equal(result, expected, decimal=7)
 
     def test_hamiltonian_to_state_inverse_relationship(self):
         """Test relationship with check_states_equal function"""
@@ -369,22 +373,22 @@ class TestStatesEqual(unittest.TestCase):
         result = check_states_equal(psi1, psi2)
         self.assertTrue(result)
 
-    #def test_check_states_equal_entangled_states(self):
-    #    """Test equality of entangled states"""
-    #    # Bell state |Φ+⟩ = (|00⟩ + |11⟩)/√2
-    #    psi1 = np.array([1/np.sqrt(2), 0, 0, 1/np.sqrt(2)], dtype=complex)
-    #    psi2 = np.array([1/np.sqrt(2), 0, 0, 1/np.sqrt(2)], dtype=complex)
-    #
-    #     result = check_states_equal(psi1, psi2)
-    #    self.assertTrue(result)
+    def test_check_states_equal_entangled_states(self):
+       """Test equality of entangled states"""
+       # Bell state |Φ+⟩ = (|00⟩ + |11⟩)/√2
+       psi1 = np.array([1/np.sqrt(2), 0, 0, 1/np.sqrt(2)], dtype=complex)
+       psi2 = np.array([1/np.sqrt(2), 0, 0, 1/np.sqrt(2)], dtype=complex)
+    
+       result = check_states_equal(psi1, psi2)
+       self.assertTrue(result)
 
-    #def test_check_states_equal_different_entangled_states(self):
-    #    """Test different entangled states"""
-    #    # |Φ+⟩ = (|00⟩ + |11⟩)/√2 vs |Φ-⟩ = (|00⟩ - |11⟩)/√2
-    #    psi1 = np.array([1/np.sqrt(2), 0, 0, 1/np.sqrt(2)], dtype=complex)
-    #    psi2 = np.array([1/np.sqrt(2), 0, 0, -1/np.sqrt(2)], dtype=complex)
-    #    result = check_states_equal(psi1, psi2)
-    #    self.assertFalse(result)
+    def test_check_states_equal_different_entangled_states(self):
+       """Test different entangled states"""
+       # |Φ+⟩ = (|00⟩ + |11⟩)/√2 vs |Φ-⟩ = (|00⟩ - |11⟩)/√2
+       psi1 = np.array([1/np.sqrt(2), 0, 0, 1/np.sqrt(2)], dtype=complex)
+       psi2 = np.array([1/np.sqrt(2), 0, 0, -1/np.sqrt(2)], dtype=complex)
+       result = check_states_equal(psi1, psi2)
+       self.assertFalse(result)
 
     def test_check_states_equal_custom_tolerance(self):
         """Test with custom tolerance"""
@@ -903,6 +907,363 @@ class TestPadHamiltonian(unittest.TestCase):
         self.assertIsInstance(result, np.ndarray)
         self.assertEqual(result.ndim, 2)
         self.assertEqual(result.shape[0], result.shape[1])  # Square matrix
+
+
+class TestPadState(unittest.TestCase):
+    """Testing the NLQK quantum state padding functionality."""
+
+    def test_pad_state_already_power_of_2(self):
+        """Test that states that are already power-of-2 size are unchanged"""
+        # 2-element state (already power of 2)
+        psi_2 = np.array([1/np.sqrt(2), 1/np.sqrt(2)], dtype=complex)
+        result = pad_state(psi_2)
+        np.testing.assert_array_equal(result, psi_2)
+        
+        # 4-element state (already power of 2)
+        psi_4 = np.array([0.5, 0.5, 0.5, 0.5], dtype=complex)
+        result = pad_state(psi_4)
+        np.testing.assert_array_equal(result, psi_4)
+
+    def test_pad_state_3_to_4(self):
+        """Test padding 3-element state to 4 elements"""
+        psi_3 = np.array([1/np.sqrt(3), 1/np.sqrt(3), 1/np.sqrt(3)], dtype=complex)
+        result = pad_state(psi_3)
+        
+        # Check dimensions
+        self.assertEqual(len(result), 4)
+        
+        # Check that original elements are preserved
+        np.testing.assert_array_equal(result[:3], psi_3)
+        
+        # Check that padding is zero
+        self.assertEqual(result[3], 0.0)
+
+    def test_pad_state_5_to_8(self):
+        """Test padding 5-element state to 8 elements"""
+        psi_5 = np.random.randn(5) + 1j * np.random.randn(5)
+        result = pad_state(psi_5)
+        
+        # Check dimensions
+        self.assertEqual(len(result), 8)
+        
+        # Check that original elements are preserved
+        np.testing.assert_array_almost_equal(result[:5], psi_5)
+        
+        # Check that padding elements are zeros
+        np.testing.assert_array_equal(result[5:], np.zeros(3, dtype=complex))
+
+    def test_pad_state_preserves_dtype(self):
+        """Test that padding preserves data type"""
+        # Complex state
+        psi_complex = np.array([1+1j, 0.5], dtype=complex)
+        result_complex = pad_state(psi_complex)
+        self.assertEqual(result_complex.dtype, complex)
+        
+        # Real state (should remain real when possible)
+        psi_real = np.array([1.0, 0.5, 0.3], dtype=float)
+        result_real = pad_state(psi_real)
+        # Note: result will be float if input was float
+        self.assertTrue(np.isrealobj(result_real) or result_real.dtype == float)
+
+    def test_pad_state_normalization_preservation(self):
+        """Test that normalization is preserved after padding with zeros"""
+        # Normalized 3-element state
+        psi_3 = np.array([1, 1, 1], dtype=complex)
+        psi_3 = psi_3 / np.linalg.norm(psi_3)  # Normalize
+        
+        result = pad_state(psi_3)
+        
+        # Original norm should be preserved since we only add zeros
+        original_norm = np.linalg.norm(psi_3)
+        result_norm = np.linalg.norm(result)
+        self.assertAlmostEqual(original_norm, result_norm, places=10)
+
+    def test_pad_state_single_element(self):
+        """Test padding 1-element state to 2 elements"""
+        psi_1 = np.array([1.0], dtype=complex)
+        result = pad_state(psi_1)
+        
+        expected = np.array([1.0, 0.0], dtype=complex)
+        np.testing.assert_array_equal(result, expected)
+
+    def test_pad_state_large_state(self):
+        """Test padding larger states"""
+        # 7-element should pad to 8-element
+        psi_7 = np.random.randn(7) + 1j * np.random.randn(7)
+        result = pad_state(psi_7)
+        
+        self.assertEqual(len(result), 8)
+        np.testing.assert_array_almost_equal(result[:7], psi_7)
+
+    def test_pad_state_power_calculation(self):
+        """Test that the power-of-2 calculation is correct for various sizes"""
+        test_cases = [
+            (1, 2),   # 1 -> 2
+            (2, 2),   # 2 -> 2 (no change)
+            (3, 4),   # 3 -> 4
+            (4, 4),   # 4 -> 4 (no change)
+            (5, 8),   # 5 -> 8
+            (8, 8),   # 8 -> 8 (no change)
+            (9, 16),  # 9 -> 16
+            (15, 16), # 15 -> 16
+            (16, 16), # 16 -> 16 (no change)
+        ]
+        
+        for input_size, expected_size in test_cases:
+            with self.subTest(input_size=input_size):
+                psi = np.random.randn(input_size)
+                result = pad_state(psi)
+                self.assertEqual(len(result), expected_size)
+
+    def test_pad_state_zero_state(self):
+        """Test padding zero states"""
+        psi_zero = np.zeros(3, dtype=complex)
+        result = pad_state(psi_zero)
+        
+        expected = np.zeros(4, dtype=complex)
+        np.testing.assert_array_equal(result, expected)
+
+    def test_pad_state_return_type(self):
+        """Test that function returns correct array type"""
+        psi_3 = np.array([1, 0.5, 0.2])
+        result = pad_state(psi_3)
+        
+        self.assertIsInstance(result, np.ndarray)
+        self.assertEqual(result.ndim, 1)  # Should be 1D vector
+
+
+class TestTomography(unittest.TestCase):
+    """Testing the NLQK quantum state tomography functionality."""
+
+    def setUp(self):
+        """Set up test fixtures"""
+        np.random.seed(42)  # For reproducible tests
+
+    def test_tomography_single_qubit_pure_state(self):
+        """Test tomography reconstruction for 1-qubit pure states"""
+        # Test |0⟩ state
+        psi_0 = np.array([1, 0], dtype=complex)
+        rho_true = np.outer(psi_0, psi_0.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=5000, add_noise=False)
+        
+        # Check dimensions
+        self.assertEqual(rho_est.shape, (2, 2))
+        self.assertEqual(phi_est.shape, (2,))
+        
+        # Check that reconstructed state is close to original
+        fidelity = np.abs(np.vdot(psi_0, phi_est)) ** 2
+        self.assertGreater(fidelity, 0.95)  # Should be high fidelity with enough shots
+        
+        # Check that density matrix is Hermitian
+        np.testing.assert_array_almost_equal(rho_est, rho_est.conj().T, decimal=10)
+        
+        # Check that density matrix is positive semidefinite
+        eigenvals = np.linalg.eigvals(rho_est)
+        self.assertTrue(np.all(eigenvals >= -1e-10))  # Allow small numerical errors
+
+    def test_tomography_single_qubit_plus_state(self):
+        """Test tomography reconstruction for |+⟩ state"""
+        psi_plus = np.array([1, 1], dtype=complex) / np.sqrt(2)
+        rho_true = np.outer(psi_plus, psi_plus.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=5000, add_noise=False)
+        
+        # Check fidelity
+        fidelity = np.abs(np.vdot(psi_plus, phi_est)) ** 2
+        self.assertGreater(fidelity, 0.95)
+
+    def test_tomography_two_qubit_bell_state(self):
+        """Test tomography reconstruction for Bell state"""
+        # Bell state |Φ+⟩ = (|00⟩ + |11⟩)/√2
+        psi_bell = np.array([1, 0, 0, 1], dtype=complex) / np.sqrt(2)
+        rho_true = np.outer(psi_bell, psi_bell.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=3000, add_noise=False)
+        
+        # Check dimensions
+        self.assertEqual(rho_est.shape, (4, 4))
+        self.assertEqual(phi_est.shape, (4,))
+        
+        # Check fidelity
+        fidelity = np.abs(np.vdot(psi_bell, phi_est)) ** 2
+        self.assertGreater(fidelity, 0.9)  # Slightly lower threshold for 2-qubit case
+
+    def test_tomography_three_qubit_random_state(self):
+        """Test tomography reconstruction for random 3-qubit pure state (main example)"""
+        # Create random 3-qubit pure state (as in the user's example)
+        dim = 2 ** 3
+        psi = np.random.randn(dim) + 1j * np.random.randn(dim)
+        psi /= np.linalg.norm(psi)
+        rho_true = np.outer(psi, psi.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=2000)
+        
+        # Check dimensions
+        self.assertEqual(rho_est.shape, (8, 8))
+        self.assertEqual(phi_est.shape, (8,))
+        
+        # Check fidelity (as in user's example)
+        fid = np.abs(np.vdot(psi, phi_est)) ** 2
+        self.assertGreater(fid, 0.7)  # Lower threshold due to more qubits and fewer shots
+        
+        # Verify the exact usage pattern from user's example
+        self.assertIsInstance(fid, (float, np.floating))
+
+    def test_tomography_expectation_values_structure(self):
+        """Test that expectation value dictionaries have correct structure"""
+        psi = np.array([1, 0], dtype=complex)
+        rho_true = np.outer(psi, psi.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=1000)
+        
+        # For 1 qubit, should have 4 Pauli measurements: I, X, Y, Z
+        expected_keys = {'I', 'X', 'Y', 'Z'}
+        self.assertEqual(set(expect_true.keys()), expected_keys)
+        self.assertEqual(set(expect_est.keys()), expected_keys)
+        
+        # Check that expectation values are in reasonable range [-1, 1]
+        for key in expected_keys:
+            self.assertGreaterEqual(expect_true[key], -1.0)
+            self.assertLessEqual(expect_true[key], 1.0)
+            self.assertGreaterEqual(expect_est[key], -1.0)
+            self.assertLessEqual(expect_est[key], 1.0)
+
+    def test_tomography_two_qubit_expectation_structure(self):
+        """Test expectation value structure for 2-qubit case"""
+        psi = np.array([1, 0, 0, 0], dtype=complex)  # |00⟩
+        rho_true = np.outer(psi, psi.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=1000)
+        
+        # For 2 qubits, should have 4^2 = 16 Pauli measurements
+        self.assertEqual(len(expect_true), 16)
+        self.assertEqual(len(expect_est), 16)
+        
+        # Check that II measurement gives 1 (identity should always be 1)
+        self.assertAlmostEqual(expect_true['II'], 1.0, places=10)
+
+    def test_tomography_trace_preservation(self):
+        """Test that reconstructed density matrix has trace 1"""
+        psi = np.array([1, 1, 0, 0], dtype=complex) / np.sqrt(2)
+        rho_true = np.outer(psi, psi.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=3000)
+        
+        # Check trace normalization
+        trace_val = trace(rho_est)
+        self.assertAlmostEqual(trace_val.real, 1.0, places=6)
+        self.assertAlmostEqual(trace_val.imag, 0.0, places=10)
+
+    def test_tomography_hermiticity(self):
+        """Test that reconstructed density matrix is Hermitian"""
+        psi = np.array([1, 1j], dtype=complex) / np.sqrt(2)
+        rho_true = np.outer(psi, psi.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=2000)
+        
+        # Check Hermiticity
+        np.testing.assert_array_almost_equal(rho_est, rho_est.conj().T, decimal=10)
+
+    def test_tomography_clip_negative_eigvals_parameter(self):
+        """Test the clip_negative_eigvals parameter"""
+        psi = np.array([1, 0], dtype=complex)
+        rho_true = np.outer(psi, psi.conj())
+        
+        # Test with clipping enabled (default)
+        rho_est_clipped, _, _, _ = tomography(rho_true, shots_per_setting=1000, clip_negative_eigvals=True)
+        
+        # Test with clipping disabled
+        rho_est_unclipped, _, _, _ = tomography(rho_true, shots_per_setting=1000, clip_negative_eigvals=False)
+        
+        # With clipping, all eigenvalues should be non-negative
+        evals_clipped = np.linalg.eigvals(rho_est_clipped)
+        self.assertTrue(np.all(evals_clipped >= -1e-10))
+        
+        # Both should be Hermitian
+        np.testing.assert_array_almost_equal(rho_est_clipped, rho_est_clipped.conj().T, decimal=10)
+        np.testing.assert_array_almost_equal(rho_est_unclipped, rho_est_unclipped.conj().T, decimal=10)
+
+    def test_tomography_invalid_input_dimensions(self):
+        """Test that function raises errors for invalid input dimensions"""
+        # Non-square matrix
+        with self.assertRaises(ValueError):
+            rho_bad = np.array([[1, 0, 0], [0, 1, 0]], dtype=complex)
+            tomography(rho_bad)
+        
+        # Non-power-of-2 dimension
+        with self.assertRaises(ValueError):
+            rho_bad = np.random.randn(3, 3) + 1j * np.random.randn(3, 3)
+            rho_bad = (rho_bad + rho_bad.conj().T) / 2
+            tomography(rho_bad)
+
+    def test_tomography_return_types(self):
+        """Test that function returns correct types"""
+        psi = np.array([1, 0], dtype=complex)
+        rho_true = np.outer(psi, psi.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=1000)
+        
+        # Check return types
+        self.assertIsInstance(rho_est, np.ndarray)
+        self.assertIsInstance(phi_est, np.ndarray)
+        self.assertIsInstance(expect_true, dict)
+        self.assertIsInstance(expect_est, dict)
+        
+        # Check array properties
+        self.assertEqual(rho_est.ndim, 2)
+        self.assertEqual(phi_est.ndim, 1)
+        self.assertTrue(np.iscomplexobj(rho_est))
+        self.assertTrue(np.iscomplexobj(phi_est))
+
+    def test_tomography_known_pauli_expectations(self):
+        """Test with states having known Pauli expectation values"""
+        # |0⟩ state: ⟨Z⟩ = 1, ⟨X⟩ = 0, ⟨Y⟩ = 0, ⟨I⟩ = 1
+        psi = np.array([1, 0], dtype=complex)
+        rho_true = np.outer(psi, psi.conj())
+        
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=5000)
+        
+        # Check theoretical expectation values
+        self.assertAlmostEqual(expect_true['I'], 1.0, places=10)
+        self.assertAlmostEqual(expect_true['Z'], 1.0, places=10)
+        self.assertAlmostEqual(expect_true['X'], 0.0, places=10)
+        self.assertAlmostEqual(expect_true['Y'], 0.0, places=10)
+
+    def test_tomography_reproducibility(self):
+        """Test that results are reproducible with same random seed"""
+        psi = np.array([1, 1], dtype=complex) / np.sqrt(2)
+        rho_true = np.outer(psi, psi.conj())
+        
+        # Run twice with same seed
+        np.random.seed(123)
+        rho_est1, phi_est1, _, _ = tomography(rho_true, shots_per_setting=1000)
+        
+        np.random.seed(123)
+        rho_est2, phi_est2, _, _ = tomography(rho_true, shots_per_setting=1000)
+        
+        # Results should be identical
+        np.testing.assert_array_equal(rho_est1, rho_est2)
+        np.testing.assert_array_equal(phi_est1, phi_est2)
+
+    def test_tomography_mixed_state(self):
+        """Test tomography with mixed states"""
+        # Create a mixed state: 0.7|0⟩⟨0| + 0.3|1⟩⟨1|
+        rho_true = 0.7 * np.array([[1, 0], [0, 0]], dtype=complex) + \
+                   0.3 * np.array([[0, 0], [0, 1]], dtype=complex)
+        
+        # Use exact expectations (no noise) for consistent test results
+        rho_est, phi_est, expect_true, expect_est = tomography(rho_true, shots_per_setting=5000, add_noise=False)
+        
+        # For mixed states, use proper quantum fidelity: F(ρ,σ) = Tr(√(√ρ σ √ρ))
+        # For identical matrices, this should equal 1.0
+        sqrt_rho_true = sqrtm(rho_true)
+        fidelity_matrix = sqrt_rho_true @ rho_est @ sqrt_rho_true
+        sqrt_fidelity_matrix = sqrtm(fidelity_matrix)
+        fidelity = trace(sqrt_fidelity_matrix).real
+        
+        self.assertGreater(fidelity, 0.9)  # Should be close to 1.0 for perfect reconstruction
+
 
 if __name__ == '__main__':
     unittest.main()
